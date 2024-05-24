@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="Fermata.ParserCombinators.fs" />
   </ItemGroup>
 
 </Project>
