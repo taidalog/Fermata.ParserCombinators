@@ -18,6 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Fermata.ParserCombinators.fsi" />
     <Compile Include="Fermata.ParserCombinators.fs" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
