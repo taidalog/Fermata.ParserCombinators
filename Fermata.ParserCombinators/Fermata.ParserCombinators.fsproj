@@ -22,4 +22,8 @@
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="*.fsproj; *.fs; *.fsi; *.js" PackagePath="fable\" />
+  </ItemGroup>
+  
 </Project>
