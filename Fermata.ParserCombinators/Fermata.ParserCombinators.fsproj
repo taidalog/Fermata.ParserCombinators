@@ -25,5 +25,5 @@
   <ItemGroup>
     <Content Include="*.fsproj; *.fs; *.fsi; *.js" PackagePath="fable\" />
   </ItemGroup>
-  
+
 </Project>
