@@ -84,7 +84,7 @@ let ``<&+> 2`` () =
         let f (x, y) =
             sprintf "%c%s" x ((List.map string >> String.concat "") y)
 
-        map' f (char' '#' <&> repN 6 hex)
+        map' f (char' '#' <&> repeat 6 hex)
 
     let expected = Ok("#65a2ac", State("color: #65a2ac", 14))
     let actual = (string' "color: " <&+> hexCode) (State("color: #65a2ac", 0))
@@ -149,13 +149,13 @@ let ``many 3`` () =
     Assert.Equal(expected, actual)
 
 [<Fact>]
-let ``repN 1`` () =
+let ``repeat 1`` () =
     let expected = Ok([ 'w'; 'w'; 'w' ], State("www.~.com", 3))
-    let actual = repN 3 (char' 'w') (State("www.~.com", 0))
+    let actual = repeat 3 (char' 'w') (State("www.~.com", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]
-let ``repN 2`` () =
+let ``repeat 2`` () =
     let hex =
         char' '0'
         <|> char' '1'
@@ -175,14 +175,14 @@ let ``repN 2`` () =
         <|> char' 'f'
 
     let expected = Ok([ '6'; '5'; 'a'; '2'; 'a'; 'c' ], State("#65a2ac", 7))
-    let actual = repN 6 hex (State("#65a2ac", 1))
+    let actual = repeat 6 hex (State("#65a2ac", 1))
     Assert.Equal(expected, actual)
 
 [<Fact>]
-let ``repN 3`` () =
+let ``repeat 3`` () =
     let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (<|>)
     let expected = Error("", State("#65a2ac", 0))
-    let actual = repN 6 hex (State("#65a2ac", 0))
+    let actual = repeat 6 hex (State("#65a2ac", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]
@@ -236,7 +236,7 @@ let ``map' 3`` () =
     let g (x, y) = sprintf "%c%s" x (f y)
 
     let expected = Ok("#65a2ac", State("#65a2ac", 7))
-    let actual = map' g (char' '#' <&> (repN 6 hex)) (State("#65a2ac", 0))
+    let actual = map' g (char' '#' <&> (repeat 6 hex)) (State("#65a2ac", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]
@@ -244,7 +244,7 @@ let ``map' 4`` () =
     let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (<|>)
     let f = List.map string >> String.concat "" >> int
     let expected = Error("", State("#65a2ac", 0))
-    let actual = map' f (repN 6 hex) (State("#65a2ac", 0))
+    let actual = map' f (repeat 6 hex) (State("#65a2ac", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]

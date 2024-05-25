@@ -66,7 +66,7 @@ module Parsers =
             | Error e -> Error e
             | Ok(v, x') -> foldWhileOk x' (v :: acc) t
 
-    let repN (count: int) (parser: Parser<'T>) : Parser<'T list> =
+    let repeat (count: int) (parser: Parser<'T>) : Parser<'T list> =
         fun (State(x, p)) ->
             List.replicate count parser
             |> foldWhileOk (State(x, p)) []

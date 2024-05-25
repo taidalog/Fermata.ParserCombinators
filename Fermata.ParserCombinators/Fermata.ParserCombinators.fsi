@@ -114,7 +114,7 @@ module Parsers =
     /// let hexCode =
     ///     let f (x, y) =
     ///         sprintf "%c%s" x ((List.map string >> String.concat "") y)
-    ///     map' f (char' '#' <&> repN 6 hex)
+    ///     map' f (char' '#' <&> repeat 6 hex)
     /// (string' "color: " <&+> hexCode) (State("color: #65a2ac", 0))
     /// </code>
     /// Evaluates to <c>Ok("#65a2ac", State("color: #65a2ac", 14))</c>
@@ -193,19 +193,19 @@ module Parsers =
     /// </example>
     val many: parser: Parser<'T> -> Parser<'T list>
 
-    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>repN</c> succeeds just <c>n</c> times, otherwise <c>Error</c>.</summary>
+    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>repeat</c> succeeds just <c>n</c> times, otherwise <c>Error</c>.</summary>
     /// <param name="count">The number of times to parse.</param>
     /// <param name="parser">The input parser.</param>
     /// <returns>The result parser.</returns>
     ///
-    /// <example id="repN-1">
+    /// <example id="repeat-1">
     /// <code lang="fsharp">
-    /// repN 3 (char' 'w') (State("www.~.com", 0))
+    /// repeat 3 (char' 'w') (State("www.~.com", 0))
     /// </code>
     /// Evaluates to <c>Ok([ 'w'; 'w'; 'w' ], State("www.~.com", 3))</c>
     /// </example>
     ///
-    /// <example id="repN-2">
+    /// <example id="repeat-2">
     /// <code lang="fsharp">
     /// let hex =
     ///     char' '0'
@@ -224,19 +224,19 @@ module Parsers =
     ///     <|> char' 'd'
     ///     <|> char' 'e'
     ///     <|> char' 'f'
-    /// repN 6 hex (State("#65a2ac", 1))
+    /// repeat 6 hex (State("#65a2ac", 1))
     /// </code>
     /// Evaluates to <c>Ok([ '6'; '5'; 'a'; '2'; 'a'; 'c' ], State("#65a2ac", 7))</c>
     /// </example>
     ///
-    /// <example id="repN-3">
+    /// <example id="repeat-3">
     /// <code lang="fsharp">
     /// let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (<|>)
-    /// repN 6 hex (State("#65a2ac", 0))
+    /// repeat 6 hex (State("#65a2ac", 0))
     /// </code>
     /// Evaluates to <c>Error("", State("#65a2ac", 0))</c>
     /// </example>
-    val repN: count: int -> parser: Parser<'T> -> Parser<'T list>
+    val repeat: count: int -> parser: Parser<'T> -> Parser<'T list>
 
     /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>map'</c> succeeds, otherwise <c>Error</c>.</summary>
     /// <param name="mapping">A function to apply to the OK result value.</param>
@@ -291,7 +291,7 @@ module Parsers =
     ///     <|> char' 'f'
     /// let f = List.map string >> String.concat ""
     /// let g (x, y) = sprintf "%c%s" x (f y)
-    /// map' g (char' '#' <&> (repN 6 hex)) (State("#65a2ac", 0))
+    /// map' g (char' '#' <&> (repeat 6 hex)) (State("#65a2ac", 0))
     /// </code>
     /// Evaluates to <c>Ok("#65a2ac", State("#65a2ac", 7))</c>
     /// </example>
@@ -300,7 +300,7 @@ module Parsers =
     /// <code lang="fsharp">
     /// let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (<|>)
     /// let f = List.map string >> String.concat "" >> int
-    /// map' f (repN 6 hex) (State("#65a2ac", 0))
+    /// map' f (repeat 6 hex) (State("#65a2ac", 0))
     /// </code>
     /// Evaluates to <c>Error("", State("#65a2ac", 0))</c>
     /// </example>
