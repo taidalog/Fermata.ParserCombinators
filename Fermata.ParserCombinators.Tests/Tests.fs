@@ -53,6 +53,53 @@ let ``<&> 4`` () =
     Assert.Equal(expected, actual)
 
 [<Fact>]
+let ``<+&> 1`` () =
+    let expected = Ok('f', State("fsharp", 2))
+    let actual = (char' 'f' <+&> char' 's') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``<+&> 2`` () =
+    let digit = [ '0' .. '9' ] |> List.map char' |> List.reduce (<|>)
+
+    let number =
+        let f = List.map string >> String.concat "" >> int
+        map' f (many digit)
+
+    let expected = Ok(100, State("100 yen", 7))
+    let actual = (number <+&> string' " yen") (State("100 yen", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``<&+> 1`` () =
+    let expected = Ok('s', State("fsharp", 2))
+    let actual = (char' 'f' <&+> char' 's') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``<&+> 2`` () =
+    let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (<|>)
+
+    let hexCode =
+        let f (x, y) =
+            sprintf "%c%s" x ((List.map string >> String.concat "") y)
+
+        map' f (char' '#' <&> repN 6 hex)
+
+    let expected = Ok("#65a2ac", State("color: #65a2ac", 14))
+    let actual = (string' "color: " <&+> hexCode) (State("color: #65a2ac", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``<&+> 3`` () =
+    let expected = Ok("taidalog", State("I'm taidalog.", 13))
+
+    let actual =
+        (string' "I'm " <&+> string' "taidalog" <+&> char' '.') (State("I'm taidalog.", 0))
+
+    Assert.Equal(expected, actual)
+
+[<Fact>]
 let ``<|> 1`` () =
     let expected = Ok('f', State("fsharp", 1))
     let actual = (char' 'f' <|> char' 'c') (State("fsharp", 0))

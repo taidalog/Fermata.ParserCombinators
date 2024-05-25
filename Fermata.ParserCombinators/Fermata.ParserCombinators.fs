@@ -21,6 +21,24 @@ module Parsers =
                 | Error(e2, _) -> Error(e2, state)
                 | Ok(v2, state2) -> Ok((v1, v2), state2)
 
+    let (<+&>) (p1: Parser<'T>) (p2: Parser<'U>) : Parser<'T> =
+        fun (state: State) ->
+            match p1 state with
+            | Error(e1, _) -> Error(e1, state)
+            | Ok(v1, state1) ->
+                match p2 state1 with
+                | Error(e2, _) -> Error(e2, state)
+                | Ok(_, state2) -> Ok(v1, state2)
+
+    let (<&+>) (p1: Parser<'T>) (p2: Parser<'U>) : Parser<'U> =
+        fun (state: State) ->
+            match p1 state with
+            | Error(e1, _) -> Error(e1, state)
+            | Ok(_, state1) ->
+                match p2 state1 with
+                | Error(e2, _) -> Error(e2, state)
+                | Ok(v2, state2) -> Ok(v2, state2)
+
     let (<|>) (p1: Parser<'T>) (p2: Parser<'T>) : Parser<'T> =
         fun (state: State) ->
             match p1 state with
