@@ -306,3 +306,27 @@ let ``string' 4`` () =
     let expected = Error("", State("fsharp", 0))
     let actual = string' "csharp" (State("fsharp", 0))
     Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``regex 1`` () =
+    let expected = Ok("fsharp", State("fsharp", 6))
+    let actual = regex ".sharp" (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``regex 2`` () =
+    let expected = Ok("taidalog", State("I'm taidalog.", 12))
+    let actual = regex "^[^\.]+" (State("I'm taidalog.", 4))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``regex 3`` () =
+    let expected = Ok("#65a2ac", State("color: #65a2ac;", 14))
+    let actual = regex "^#[0-9a-f]{6}" (State("color: #65a2ac;", 7))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``regex 4`` () =
+    let expected = Error("", State("color: #65a2ac;", 7))
+    let actual = regex "^#[0-9A-F]{6}" (State("color: #65a2ac;", 7))
+    Assert.Equal(expected, actual)

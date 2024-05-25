@@ -17,3 +17,4 @@ module Parsers =
         binder: ('T -> Result<'U, string>) -> parser: Parser<'T> -> state: State -> Result<'U * State, string * State>
 
     val string': s: string -> State -> Result<string * State, string * State>
+    val regex: pattern: string -> State -> Result<string * State, string * State>
