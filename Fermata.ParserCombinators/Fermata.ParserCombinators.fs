@@ -64,12 +64,12 @@ module Parsers =
             | Error(e, s) -> Error(e, state)
 
     let map'
-        (f: 'T -> 'U)
+        (mapping: 'T -> 'U)
         (parser: State -> Result<'T * State, string * State>)
         (state: State)
         : Result<'U * State, string * State> =
         match parser state with
-        | Ok(x, state) -> Ok(f x, state)
+        | Ok(x, state) -> Ok(mapping x, state)
         | Error(e, state) -> Error(e, state)
 
     let bind

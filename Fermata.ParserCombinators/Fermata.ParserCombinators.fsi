@@ -24,7 +24,7 @@ module Parsers =
             Result<'T list * State, string * State>
 
     val map':
-        f: ('T -> 'U) ->
+        mapping: ('T -> 'U) ->
         parser: (State -> Result<'T * State, string * State>) ->
         state: State ->
             Result<'U * State, string * State>
