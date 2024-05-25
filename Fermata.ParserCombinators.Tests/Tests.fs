@@ -45,3 +45,21 @@ let ``<&> 4`` () =
     let expected = Error("", State("fsharp", 0))
     let actual = (char' 'f' <&> char' 's' <&> char' 's') (State("fsharp", 0))
     Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``<|> 1`` () =
+    let expected = Ok('f', State("fsharp", 1))
+    let actual = (char' 'f' <|> char' 'c') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``<|> 2`` () =
+    let expected = Ok('c', State("csharp", 1))
+    let actual = (char' 'f' <|> char' 'c') (State("csharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``<|> 3`` () =
+    let expected = Error("", State("sharp", 0))
+    let actual = (char' 'f' <|> char' 'c') (State("sharp", 0))
+    Assert.Equal(expected, actual)

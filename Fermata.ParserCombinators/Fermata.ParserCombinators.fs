@@ -23,3 +23,14 @@ module Parsers =
                 match p2 state1 with
                 | Error(e2, _) -> Error(e2, state)
                 | Ok(v2, state2) -> Ok((v1, v2), state2)
+    let (<|>)
+        (p1: State -> Result<'T * State, string * State>)
+        (p2: State -> Result<'T * State, string * State>)
+        : (State -> Result<'T * State, string * State>) =
+        fun (state: State) ->
+            match p1 state with
+            | Ok x -> Ok x
+            | Error _ ->
+                match p2 state with
+                | Ok y -> Ok y
+                | Error e -> Error e
