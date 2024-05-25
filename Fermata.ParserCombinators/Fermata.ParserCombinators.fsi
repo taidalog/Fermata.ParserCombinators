@@ -7,7 +7,6 @@ module Parsers =
 
     /// <summary>Returns the parsing result.</summary>
     /// <param name="c">The input <c>char</c>.</param>
-    /// <param name="">The input <c>State</c>.</param>
     /// <returns>The parsed <c>char</c> or <c>Error</c>.</returns>
     ///
     /// <example id="char'-1">
@@ -37,7 +36,7 @@ module Parsers =
     /// </code>
     /// Evaluates to <c>Error("", State("fsharp", 6))</c>
     /// </example>
-    val char': c: char -> State -> Result<char * State, string * State>
+    val char': c: char -> Parser<char>
 
     /// <summary>Combines two parsers and returns a new parser that returns <c>Ok</c> if both input parsers succeed, otherwise <c>Error</c>.</summary>
     /// <param name="p1">The first input parser.</param>
@@ -65,40 +64,33 @@ module Parsers =
 
     /// <summary></summary>
     /// <param name="p">The input parser.</param>
-    /// <param name="state">The input <c>State</c>.</param>
     /// <returns>The list of parsed value or an empty list.</returns>
-    val many: p: Parser<'T> -> state: State -> Result<'T list * State, string * State>
+    val many: parser: Parser<'T> -> Parser<'T list>
 
     /// <summary></summary>
     /// <param name="n">The number of times to parse.</param>
     /// <param name="parser">The input parser.</param>
-    /// <param name="state">The input <c>State</c>.</param>
     /// <returns>The list of parsed value or <c>Error</c>.</returns>
-    val repN: n: int -> parser: Parser<'T> -> state: State -> Result<'T list * State, string * State>
+    val repN: n: int -> parser: Parser<'T> -> Parser<'T list>
 
     /// <summary>Returns the parsing result converted with the mapping function, or <c>Error</c>.</summary>
     /// <param name="mapping">A function to apply to the OK result value.</param>
     /// <param name="parser">The input parser.</param>
-    /// <param name="state">The input <c>State</c>.</param>
     /// <returns>The parsed and converted value or <c>Error</c>.</returns>
-    val map': mapping: ('T -> 'U) -> parser: Parser<'T> -> state: State -> Result<'U * State, string * State>
+    val map': mapping: ('T -> 'U) -> parser: Parser<'T> -> Parser<'U>
 
     /// <summary>Returns the parsing result converted with the binder function, or <c>Error</c>.</summary>
     /// <param name="binder">A function that takes the value of type T from a result and transforms it into a result containing a value of type U.</param>
     /// <param name="parser">The input parser.</param>
-    /// <param name="state">The input <c>State</c>.</param>
     /// <returns>The parsed and converted value or <c>Error</c>.</returns>
-    val bind:
-        binder: ('T -> Result<'U, string>) -> parser: Parser<'T> -> state: State -> Result<'U * State, string * State>
+    val bind: binder: ('T -> Result<'U, string>) -> parser: Parser<'T> -> Parser<'U>
 
     /// <summary></summary>
     /// <param name="s">The input <c>string</c>.</param>
-    /// <param name="">The input <c>State</c>.</param>
     /// <returns>The parsed <c>string</c> or <c>Error</c>.</returns>
-    val string': s: string -> State -> Result<string * State, string * State>
+    val string': s: string -> Parser<string>
 
     /// <summary></summary>
     /// <param name="pattern">Regular Expression pattern.</param>
-    /// <param name="">The input <c>State</c>.</param>
     /// <returns>The parsed <c>string</c> or <c>Error</c>.</returns>
-    val regex: pattern: string -> State -> Result<string * State, string * State>
+    val regex: pattern: string -> Parser<string>
