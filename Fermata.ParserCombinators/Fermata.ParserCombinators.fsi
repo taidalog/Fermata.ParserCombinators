@@ -34,3 +34,5 @@ module Parsers =
         parser: (State -> Result<'T * State, string * State>) ->
         state: State ->
             Result<'U * State, string * State>
+
+    val string': s: string -> State -> Result<string * State, string * State>

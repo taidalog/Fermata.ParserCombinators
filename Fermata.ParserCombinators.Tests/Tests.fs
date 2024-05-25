@@ -280,3 +280,27 @@ let ``bind 2`` () =
     let expected = Error("", State("#65a2ac", 0))
     let actual = bind binder (many digit) (State("#65a2ac", 0))
     Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``string' 1`` () =
+    let expected = Ok("fs", State("fsharp", 2))
+    let actual = string' "fs" (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``string' 2`` () =
+    let expected = Ok("fsharp", State("fsharp", 6))
+    let actual = string' "fsharp" (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``string' 3`` () =
+    let expected = Ok("sharp", State("fsharp", 6))
+    let actual = string' "sharp" (State("fsharp", 1))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``string' 4`` () =
+    let expected = Error("", State("fsharp", 0))
+    let actual = string' "csharp" (State("fsharp", 0))
+    Assert.Equal(expected, actual)

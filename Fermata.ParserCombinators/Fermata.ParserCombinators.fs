@@ -83,3 +83,15 @@ module Parsers =
             match binder x with
             | Ok x' -> Ok(x', state')
             | Error e' -> Error(e', state)
+
+    let string' (s: string) (State(x, p)) : Result<string * State, string * State> =
+        let len = String.length s
+
+        if len = 0 then
+            Error("", State(x, p))
+        else if p >= len then
+            Error("", State(x, p))
+        else if x.[p .. p + len - 1] = s then
+            Ok(s, State(x, p + len))
+        else
+            Error("", State(x, p))
