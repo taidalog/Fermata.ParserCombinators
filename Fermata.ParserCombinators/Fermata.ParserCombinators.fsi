@@ -5,9 +5,9 @@ module Parsers =
     type State = State of string * int
     type Parser<'T> = State -> Result<'T * State, string * State>
 
-    /// <summary>Returns the parsing result.</summary>
+    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the charactor at the specified position in the string in <c>State</c> matches <c>c</c>, otherwise <c>Error</c>.</summary>
     /// <param name="c">The input <c>char</c>.</param>
-    /// <returns>The parsed <c>char</c> or <c>Error</c>.</returns>
+    /// <returns>The result parser.</returns>
     ///
     /// <example id="char'-1">
     /// <code lang="fsharp">
@@ -62,35 +62,35 @@ module Parsers =
     /// <returns>The result parser.</returns>
     val (<|>): p1: Parser<'T> -> p2: Parser<'T> -> Parser<'T>
 
-    /// <summary></summary>
-    /// <param name="p">The input parser.</param>
-    /// <returns>The list of parsed value or an empty list.</returns>
+    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>many</c> succeeds more than 0 times.</summary>
+    /// <param name="parser">The input parser.</param>
+    /// <returns>The result parser.</returns>
     val many: parser: Parser<'T> -> Parser<'T list>
 
-    /// <summary></summary>
+    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>repN</c> succeeds just <c>n</c> times, otherwise <c>Error</c>.</summary>
     /// <param name="n">The number of times to parse.</param>
     /// <param name="parser">The input parser.</param>
-    /// <returns>The list of parsed value or <c>Error</c>.</returns>
+    /// <returns>The result parser.</returns>
     val repN: n: int -> parser: Parser<'T> -> Parser<'T list>
 
-    /// <summary>Returns the parsing result converted with the mapping function, or <c>Error</c>.</summary>
+    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>map'</c> succeeds, otherwise <c>Error</c>.</summary>
     /// <param name="mapping">A function to apply to the OK result value.</param>
     /// <param name="parser">The input parser.</param>
-    /// <returns>The parsed and converted value or <c>Error</c>.</returns>
+    /// <returns>The result parser.</returns>
     val map': mapping: ('T -> 'U) -> parser: Parser<'T> -> Parser<'U>
 
-    /// <summary>Returns the parsing result converted with the binder function, or <c>Error</c>.</summary>
+    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>bind</c> succeeds, otherwise <c>Error</c>.</summary>
     /// <param name="binder">A function that takes the value of type T from a result and transforms it into a result containing a value of type U.</param>
     /// <param name="parser">The input parser.</param>
-    /// <returns>The parsed and converted value or <c>Error</c>.</returns>
+    /// <returns>The result parser.</returns>
     val bind: binder: ('T -> Result<'U, string>) -> parser: Parser<'T> -> Parser<'U>
 
-    /// <summary></summary>
+    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the substring from the specified position in the string in <c>State</c> matches <c>s</c>, otherwise <c>Error</c>.</summary>
     /// <param name="s">The input <c>string</c>.</param>
-    /// <returns>The parsed <c>string</c> or <c>Error</c>.</returns>
+    /// <returns>The result parser.</returns>
     val string': s: string -> Parser<string>
 
-    /// <summary></summary>
+    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the string in <c>State</c> matches <c>pattern</c>, otherwise <c>Error</c>.</summary>
     /// <param name="pattern">Regular Expression pattern.</param>
-    /// <returns>The parsed <c>string</c> or <c>Error</c>.</returns>
+    /// <returns>The result parser.</returns>
     val regex: pattern: string -> Parser<string>
