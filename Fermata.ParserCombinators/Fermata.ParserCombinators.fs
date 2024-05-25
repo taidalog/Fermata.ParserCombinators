@@ -97,14 +97,17 @@ module Parsers =
 
     let string' (s: string) : Parser<string> =
         fun (State(x, p)) ->
-            let len = String.length s
+            let xLen = String.length x
+            let sLen = String.length s
 
-            if len = 0 then
+            if sLen = 0 then
                 Error("", State(x, p))
-            else if p >= len then
+            else if xLen = 0 then
                 Error("", State(x, p))
-            else if x.[p .. p + len - 1] = s then
-                Ok(s, State(x, p + len))
+            else if p >= xLen then
+                Error("", State(x, p))
+            else if x.[p .. p + sLen - 1] = s then
+                Ok(s, State(x, p + sLen))
             else
                 Error("", State(x, p))
 

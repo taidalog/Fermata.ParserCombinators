@@ -35,6 +35,12 @@ let ``char' 4`` () =
     Assert.Equal(expected, actual)
 
 [<Fact>]
+let ``char' 5`` () =
+    let expected = Error("", State("", 0))
+    let actual = char' 'x' (State("", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
 let ``<&> 1`` () =
     let expected = Ok(('f', 's'), State("fsharp", 2))
     let actual = (char' 'f' <&> char' 's') (State("fsharp", 0))
@@ -311,6 +317,24 @@ let ``string' 3`` () =
 let ``string' 4`` () =
     let expected = Error("", State("fsharp", 0))
     let actual = string' "csharp" (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``string' 5`` () =
+    let expected = Error("", State("fsharp", 0))
+    let actual = string' "" (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``string' 6`` () =
+    let expected = Error("", State("", 0))
+    let actual = string' "fsharp" (State("", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``string' 7`` () =
+    let expected = Error("", State("", 0))
+    let actual = string' "" (State("", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]

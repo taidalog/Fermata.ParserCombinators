@@ -42,6 +42,13 @@ module Parsers =
     /// </code>
     /// Evaluates to <c>Error("", State("fsharp", 6))</c>
     /// </example>
+    ///
+    /// <example id="char'-5">
+    /// <code lang="fsharp">
+    /// char' 'x' (State("", 0))
+    /// </code>
+    /// Evaluates to <c>Error("", State("", 0))</c>
+    /// </example>
     val char': c: char -> Parser<char>
 
     /// <summary>Combines two parsers and returns a new parser that returns <c>Ok</c> if both input parsers succeed, otherwise <c>Error</c>.</summary>
@@ -382,6 +389,27 @@ module Parsers =
     /// string' "csharp" (State("fsharp", 0))
     /// </code>
     /// Evaluates to <c>Error("", State("fsharp", 0))</c>
+    /// </example>
+    ///
+    /// <example id="string'-5">
+    /// <code lang="fsharp">
+    /// string' "" (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Error("", State("fsharp", 0))</c>
+    /// </example>
+    ///
+    /// <example id="string'-6">
+    /// <code lang="fsharp">
+    /// string' "fsharp" (State("", 0))
+    /// </code>
+    /// Evaluates to <c>Error("", State("", 0))</c>
+    /// </example>
+    ///
+    /// <example id="string'-7">
+    /// <code lang="fsharp">
+    /// string' "" (State("", 0))
+    /// </code>
+    /// Evaluates to <c>Error("", State("", 0))</c>
     /// </example>
     val string': s: string -> Parser<string>
 
