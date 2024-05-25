@@ -1,6 +1,5 @@
 namespace Fermata.ParserCombinators
-    
-    module Say =
-        
-        val hello: name: string -> unit
 
+module Parsers =
+
+    type State = State of string * int

@@ -1,5 +1,4 @@
 ﻿namespace Fermata.ParserCombinators
 
-module Say =
-    let hello name =
-        printfn "Hello %s" name
+module Parsers =
+    type State = State of string * int
