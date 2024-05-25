@@ -127,24 +127,7 @@ let ``repN 2`` () =
 
 [<Fact>]
 let ``repN 3`` () =
-    let hex =
-        char' '0'
-        <|> char' '1'
-        <|> char' '2'
-        <|> char' '3'
-        <|> char' '4'
-        <|> char' '5'
-        <|> char' '6'
-        <|> char' '7'
-        <|> char' '8'
-        <|> char' '9'
-        <|> char' 'a'
-        <|> char' 'b'
-        <|> char' 'c'
-        <|> char' 'd'
-        <|> char' 'e'
-        <|> char' 'f'
-
+    let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (<|>)
     let expected = Error("", State("#65a2ac", 0))
     let actual = repN 6 hex (State("#65a2ac", 0))
     Assert.Equal(expected, actual)
@@ -169,20 +152,8 @@ let ``map' 1`` () =
 
 [<Fact>]
 let ``map' 2`` () =
-    let digit =
-        char' '0'
-        <|> char' '1'
-        <|> char' '2'
-        <|> char' '3'
-        <|> char' '4'
-        <|> char' '5'
-        <|> char' '6'
-        <|> char' '7'
-        <|> char' '8'
-        <|> char' '9'
-
+    let digit = [ '0' .. '9' ] |> List.map char' |> List.reduce (<|>)
     let f = List.map string >> String.concat "" >> int
-
     let expected = Ok(123, State("123 hey!", 3))
     let actual = map' f (many digit) (State("123 hey!", 0))
     Assert.Equal(expected, actual)
@@ -217,22 +188,10 @@ let ``map' 3`` () =
 
 [<Fact>]
 let ``map' 4`` () =
-    let digit =
-        char' '0'
-        <|> char' '1'
-        <|> char' '2'
-        <|> char' '3'
-        <|> char' '4'
-        <|> char' '5'
-        <|> char' '6'
-        <|> char' '7'
-        <|> char' '8'
-        <|> char' '9'
-
+    let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (<|>)
     let f = List.map string >> String.concat "" >> int
-
-    let expected = Error("", State("#65a2ac", 1))
-    let actual = map' f (repN 6 digit) (State("#65a2ac", 1))
+    let expected = Error("", State("#65a2ac", 0))
+    let actual = map' f (repN 6 hex) (State("#65a2ac", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]
@@ -260,17 +219,7 @@ let ``bind 1`` () =
 
 [<Fact>]
 let ``bind 2`` () =
-    let digit =
-        char' '0'
-        <|> char' '1'
-        <|> char' '2'
-        <|> char' '3'
-        <|> char' '4'
-        <|> char' '5'
-        <|> char' '6'
-        <|> char' '7'
-        <|> char' '8'
-        <|> char' '9'
+    let digit = [ '0' .. '9' ] |> List.map char' |> List.reduce (<|>)
 
     let binder x =
         match x with
