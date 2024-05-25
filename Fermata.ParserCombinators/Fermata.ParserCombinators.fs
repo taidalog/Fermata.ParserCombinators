@@ -13,39 +13,39 @@ module Parsers =
             else if x.[p] = c then Ok(c, State(x, p + 1))
             else Error("", State(x, p))
 
-    let (<&>) (p1: Parser<'T>) (p2: Parser<'U>) : Parser<'T * 'U> =
+    let (<&>) (parser1: Parser<'T>) (parser2: Parser<'U>) : Parser<'T * 'U> =
         fun (state: State) ->
-            match p1 state with
+            match parser1 state with
             | Error(e1, _) -> Error(e1, state)
             | Ok(v1, state1) ->
-                match p2 state1 with
+                match parser2 state1 with
                 | Error(e2, _) -> Error(e2, state)
                 | Ok(v2, state2) -> Ok((v1, v2), state2)
 
-    let (<+&>) (p1: Parser<'T>) (p2: Parser<'U>) : Parser<'T> =
+    let (<+&>) (parser1: Parser<'T>) (parser2: Parser<'U>) : Parser<'T> =
         fun (state: State) ->
-            match p1 state with
+            match parser1 state with
             | Error(e1, _) -> Error(e1, state)
             | Ok(v1, state1) ->
-                match p2 state1 with
+                match parser2 state1 with
                 | Error(e2, _) -> Error(e2, state)
                 | Ok(_, state2) -> Ok(v1, state2)
 
-    let (<&+>) (p1: Parser<'T>) (p2: Parser<'U>) : Parser<'U> =
+    let (<&+>) (parser1: Parser<'T>) (parser2: Parser<'U>) : Parser<'U> =
         fun (state: State) ->
-            match p1 state with
+            match parser1 state with
             | Error(e1, _) -> Error(e1, state)
             | Ok(_, state1) ->
-                match p2 state1 with
+                match parser2 state1 with
                 | Error(e2, _) -> Error(e2, state)
                 | Ok(v2, state2) -> Ok(v2, state2)
 
-    let (<|>) (p1: Parser<'T>) (p2: Parser<'T>) : Parser<'T> =
+    let (<|>) (parser1: Parser<'T>) (parser2: Parser<'T>) : Parser<'T> =
         fun (state: State) ->
-            match p1 state with
+            match parser1 state with
             | Ok x -> Ok x
             | Error _ ->
-                match p2 state with
+                match parser2 state with
                 | Ok y -> Ok y
                 | Error e -> Error e
 
@@ -66,9 +66,9 @@ module Parsers =
             | Error e -> Error e
             | Ok(v, x') -> foldWhileOk x' (v :: acc) t
 
-    let repN (n: int) (parser: Parser<'T>) : Parser<'T list> =
+    let repN (count: int) (parser: Parser<'T>) : Parser<'T list> =
         fun (State(x, p)) ->
-            List.replicate n parser
+            List.replicate count parser
             |> foldWhileOk (State(x, p)) []
             |> function
                 | Ok x -> Ok x

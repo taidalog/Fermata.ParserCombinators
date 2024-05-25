@@ -39,8 +39,8 @@ module Parsers =
     val char': c: char -> Parser<char>
 
     /// <summary>Combines two parsers and returns a new parser that returns <c>Ok</c> if both input parsers succeed, otherwise <c>Error</c>.</summary>
-    /// <param name="p1">The first input parser.</param>
-    /// <param name="p2">The second input parser.</param>
+    /// <param name="parser1">The first input parser.</param>
+    /// <param name="parser2">The second input parser.</param>
     /// <returns>The result parser.</returns>
     ///
     /// <example id="<&>-1">
@@ -70,11 +70,11 @@ module Parsers =
     /// </code>
     /// Evaluates to <c>Error("", State("fsharp", 0))</c>
     /// </example>
-    val (<&>): p1: Parser<'T> -> p2: Parser<'U> -> Parser<'T * 'U>
+    val (<&>): parser1: Parser<'T> -> parser2: Parser<'U> -> Parser<'T * 'U>
 
     /// <summary>Combines two parsers and returns a new parser that returns <c>Ok</c> and only the first value if both input parsers succeed, otherwise <c>Error</c>.</summary>
-    /// <param name="p1">The first input parser.</param>
-    /// <param name="p2">The second input parser.</param>
+    /// <param name="parser1">The first input parser.</param>
+    /// <param name="parser2">The second input parser.</param>
     /// <returns>The result parser.</returns>
     ///
     /// <example id="<+&>-1">
@@ -94,11 +94,11 @@ module Parsers =
     /// </code>
     /// Evaluates to <c>Ok(100, State("100 yen", 7))</c>
     /// </example>
-    val (<+&>): p1: Parser<'T> -> p2: Parser<'U> -> Parser<'T>
+    val (<+&>): parser1: Parser<'T> -> parser2: Parser<'U> -> Parser<'T>
 
     /// <summary>Combines two parsers and returns a new parser that returns <c>Ok</c> and only the second value if both input parsers succeed, otherwise <c>Error</c>.</summary>
-    /// <param name="p1">The first input parser.</param>
-    /// <param name="p2">The second input parser.</param>
+    /// <param name="parser1">The first input parser.</param>
+    /// <param name="parser2">The second input parser.</param>
     /// <returns>The result parser.</returns>
     ///
     /// <example id="<&+>-1">
@@ -126,11 +126,11 @@ module Parsers =
     /// </code>
     /// Evaluates to <c>Ok("taidalog", State("I'm taidalog.", 13))</c>
     /// </example>
-    val (<&+>): p1: Parser<'T> -> p2: Parser<'U> -> Parser<'U>
+    val (<&+>): parser1: Parser<'T> -> parser2: Parser<'U> -> Parser<'U>
 
     /// <summary>Combines two parsers and returns a new parser that returns <c>Ok</c> if either input parsers succeeds, otherwise <c>Error</c>.</summary>
-    /// <param name="p1">The first input parser.</param>
-    /// <param name="p2">The second input parser.</param>
+    /// <param name="parser1">The first input parser.</param>
+    /// <param name="parser2">The second input parser.</param>
     /// <returns>The result parser.</returns>
     ///
     /// <example id="<|>-1">
@@ -153,7 +153,7 @@ module Parsers =
     /// </code>
     /// Evaluates to <c>Error("", State("sharp", 0))</c>
     /// </example>
-    val (<|>): p1: Parser<'T> -> p2: Parser<'T> -> Parser<'T>
+    val (<|>): parser1: Parser<'T> -> parser2: Parser<'T> -> Parser<'T>
 
     /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>many</c> succeeds more than 0 times.</summary>
     /// <param name="parser">The input parser.</param>
@@ -194,7 +194,7 @@ module Parsers =
     val many: parser: Parser<'T> -> Parser<'T list>
 
     /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>repN</c> succeeds just <c>n</c> times, otherwise <c>Error</c>.</summary>
-    /// <param name="n">The number of times to parse.</param>
+    /// <param name="count">The number of times to parse.</param>
     /// <param name="parser">The input parser.</param>
     /// <returns>The result parser.</returns>
     ///
@@ -236,7 +236,7 @@ module Parsers =
     /// </code>
     /// Evaluates to <c>Error("", State("#65a2ac", 0))</c>
     /// </example>
-    val repN: n: int -> parser: Parser<'T> -> Parser<'T list>
+    val repN: count: int -> parser: Parser<'T> -> Parser<'T list>
 
     /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>map'</c> succeeds, otherwise <c>Error</c>.</summary>
     /// <param name="mapping">A function to apply to the OK result value.</param>
