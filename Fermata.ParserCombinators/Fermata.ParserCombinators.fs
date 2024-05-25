@@ -11,3 +11,15 @@ module Parsers =
                 Ok(c, State(x, p + 1))
             else
                 Error("", State(x, p))
+
+    let (<&>)
+        (p1: State -> Result<'T * State, string * State>)
+        (p2: State -> Result<'U * State, string * State>)
+        : (State -> Result<('T * 'U) * State, string * State>) =
+        fun (state: State) ->
+            match p1 state with
+            | Error(e1, _) -> Error(e1, state)
+            | Ok(v1, state1) ->
+                match p2 state1 with
+                | Error(e2, _) -> Error(e2, state)
+                | Ok(v2, state2) -> Ok((v1, v2), state2)

@@ -21,3 +21,27 @@ let ``char' 3`` () =
     let expected = Error("", State("fsharp", 0))
     let actual = char' 'c' (State("fsharp", 0))
     Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``<&> 1`` () =
+    let expected = Ok(('f', 's'), State("fsharp", 2))
+    let actual = (char' 'f' <&> char' 's') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``<&> 2`` () =
+    let expected = Error("", State("fsharp", 0))
+    let actual = (char' 'f' <&> char' '#') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``<&> 3`` () =
+    let expected = Ok((('f', 's'), 'h'), State("fsharp", 3))
+    let actual = (char' 'f' <&> char' 's' <&> char' 'h') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``<&> 4`` () =
+    let expected = Error("", State("fsharp", 0))
+    let actual = (char' 'f' <&> char' 's' <&> char' 's') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
