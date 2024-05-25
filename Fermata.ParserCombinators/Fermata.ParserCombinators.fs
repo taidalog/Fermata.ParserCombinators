@@ -50,13 +50,13 @@ module Parsers =
                 | Error e -> Error e
 
     let many (parser: Parser<'T>) : Parser<'T list> =
-        fun (State(x, p)) ->
+        fun (state: State) ->
             let rec inner (acc: 'T list) (s: State) =
                 match parser s with
                 | Error(_, state') -> Ok(List.rev acc, state')
                 | Ok(v, state') -> inner (v :: acc) state'
 
-            inner [] (State(x, p))
+            inner [] state
 
     let rec foldWhileOk x acc list =
         match list with
@@ -67,27 +67,27 @@ module Parsers =
             | Ok(v, x') -> foldWhileOk x' (v :: acc) t
 
     let repeat (count: int) (parser: Parser<'T>) : Parser<'T list> =
-        fun (State(x, p)) ->
+        fun (state: State) ->
             List.replicate count parser
-            |> foldWhileOk (State(x, p)) []
+            |> foldWhileOk state []
             |> function
                 | Ok v -> Ok v
-                | Error(e, _) -> Error(e, State(x, p))
+                | Error(e, _) -> Error(e, state)
 
     let map' (mapping: 'T -> 'U) (parser: Parser<'T>) : Parser<'U> =
-        fun (State(x, p)) ->
-            match parser (State(x, p)) with
+        fun (state: State) ->
+            match parser state with
             | Ok(v, state') -> Ok(mapping v, state')
             | Error e -> Error e
 
     let bind (binder: 'T -> Result<'U, string>) (parser: Parser<'T>) : Parser<'U> =
-        fun (State(x, p)) ->
-            match parser (State(x, p)) with
+        fun (state: State) ->
+            match parser state with
             | Error e -> Error e
             | Ok(v, state') ->
                 match binder v with
                 | Ok v' -> Ok(v', state')
-                | Error e' -> Error(e', State(x, p))
+                | Error e' -> Error(e', state)
 
     let string' (s: string) : Parser<string> =
         fun (State(x, p)) ->
