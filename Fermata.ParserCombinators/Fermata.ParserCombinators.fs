@@ -71,13 +71,13 @@ module Parsers =
             List.replicate count parser
             |> foldWhileOk (State(x, p)) []
             |> function
-                | Ok x -> Ok x
-                | Error(e, s) -> Error(e, State(x, p))
+                | Ok v -> Ok v
+                | Error(e, _) -> Error(e, State(x, p))
 
     let map' (mapping: 'T -> 'U) (parser: Parser<'T>) : Parser<'U> =
         fun (State(x, p)) ->
             match parser (State(x, p)) with
-            | Ok(x, state') -> Ok(mapping x, state')
+            | Ok(v, state') -> Ok(mapping v, state')
             | Error e -> Error e
 
     let bind (binder: 'T -> Result<'U, string>) (parser: Parser<'T>) : Parser<'U> =
