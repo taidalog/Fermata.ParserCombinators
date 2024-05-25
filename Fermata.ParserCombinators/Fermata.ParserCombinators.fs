@@ -1,4 +1,10 @@
-﻿namespace Fermata.ParserCombinators
+﻿// Fermata.ParserCombinators Version 0.1.0
+// https://github.com/taidalog/Fermata.ParserCombinators
+// Copyright (c) 2024 taidalog
+// This software is licensed under the MIT License.
+// https://github.com/taidalog/Fermata.ParserCombinators/blob/main/LICENSE
+
+namespace Fermata.ParserCombinators
 
 module Parsers =
     type State = State of string * int
