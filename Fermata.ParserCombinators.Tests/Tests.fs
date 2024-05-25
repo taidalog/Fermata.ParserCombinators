@@ -23,6 +23,12 @@ let ``char' 3`` () =
     Assert.Equal(expected, actual)
 
 [<Fact>]
+let ``char' 4`` () =
+    let expected = Error("", State("fsharp", 6))
+    let actual = char' 'x' (State("fsharp", 6))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
 let ``<&> 1`` () =
     let expected = Ok(('f', 's'), State("fsharp", 2))
     let actual = (char' 'f' <&> char' 's') (State("fsharp", 0))
