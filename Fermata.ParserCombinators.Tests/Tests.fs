@@ -94,3 +94,57 @@ let ``many 3`` () =
     let expected = Ok([], State("123 hey!", 0))
     let actual = many (abc) (State("123 hey!", 0))
     Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``repN 1`` () =
+    let expected = Ok([ 'w'; 'w'; 'w' ], State("www.~.com", 3))
+    let actual = repN 3 (char' 'w') (State("www.~.com", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``repN 2`` () =
+    let hex =
+        char' '0'
+        <|> char' '1'
+        <|> char' '2'
+        <|> char' '3'
+        <|> char' '4'
+        <|> char' '5'
+        <|> char' '6'
+        <|> char' '7'
+        <|> char' '8'
+        <|> char' '9'
+        <|> char' 'a'
+        <|> char' 'b'
+        <|> char' 'c'
+        <|> char' 'd'
+        <|> char' 'e'
+        <|> char' 'f'
+
+    let expected = Ok([ '6'; '5'; 'a'; '2'; 'a'; 'c' ], State("#65a2ac", 7))
+    let actual = repN 6 hex (State("#65a2ac", 1))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``repN 3`` () =
+    let hex =
+        char' '0'
+        <|> char' '1'
+        <|> char' '2'
+        <|> char' '3'
+        <|> char' '4'
+        <|> char' '5'
+        <|> char' '6'
+        <|> char' '7'
+        <|> char' '8'
+        <|> char' '9'
+        <|> char' 'a'
+        <|> char' 'b'
+        <|> char' 'c'
+        <|> char' 'd'
+        <|> char' 'e'
+        <|> char' 'f'
+
+    let expected = Error("", State("#65a2ac", 0))
+    let actual = repN 6 hex (State("#65a2ac", 0))
+    Assert.Equal(expected, actual)

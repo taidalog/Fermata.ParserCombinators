@@ -16,3 +16,9 @@ module Parsers =
             (State -> Result<'T * State, string * State>)
 
     val many: p: (State -> Result<'T * State, string * State>) -> State -> Result<'T list * State, string * State>
+
+    val repN:
+        n: int ->
+        parser: (State -> Result<'T * State, string * State>) ->
+        state: State ->
+            Result<'T list * State, string * State>

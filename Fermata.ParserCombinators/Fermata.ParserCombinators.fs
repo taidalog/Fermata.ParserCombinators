@@ -43,3 +43,22 @@ module Parsers =
             | Ok(v, state') -> inner (v :: acc) state'
 
         inner [] state
+
+    let rec foldWhileOk x acc list =
+        match list with
+        | [] -> Ok(List.rev acc, x)
+        | h :: t ->
+            match h x with
+            | Error e -> Error e
+            | Ok(v, x') -> foldWhileOk x' (v :: acc) t
+
+    let repN
+        (n: int)
+        (parser: State -> Result<'T * State, string * State>)
+        (state: State)
+        : Result<'T list * State, string * State> =
+        List.replicate n parser
+        |> foldWhileOk state []
+        |> function
+            | Ok x -> Ok x
+            | Error(e, s) -> Error(e, state)
