@@ -23,6 +23,7 @@ module Parsers =
                 match p2 state1 with
                 | Error(e2, _) -> Error(e2, state)
                 | Ok(v2, state2) -> Ok((v1, v2), state2)
+
     let (<|>)
         (p1: State -> Result<'T * State, string * State>)
         (p2: State -> Result<'T * State, string * State>)
@@ -34,3 +35,11 @@ module Parsers =
                 match p2 state with
                 | Ok y -> Ok y
                 | Error e -> Error e
+
+    let many (p: State -> Result<'T * State, string * State>) (state: State) : Result<'T list * State, string * State> =
+        let rec inner (acc: 'T list) (s: State) =
+            match p s with
+            | Error(_, state') -> Ok(List.rev acc, state')
+            | Ok(v, state') -> inner (v :: acc) state'
+
+        inner [] state
