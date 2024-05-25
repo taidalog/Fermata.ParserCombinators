@@ -69,8 +69,8 @@ module Parsers =
         (state: State)
         : Result<'U * State, string * State> =
         match parser state with
-        | Ok(x, state) -> Ok(mapping x, state)
-        | Error(e, state) -> Error(e, state)
+        | Ok(x, state') -> Ok(mapping x, state')
+        | Error e -> Error e
 
     let bind
         (binder: 'T -> Result<'U, string>)
