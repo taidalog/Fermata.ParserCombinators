@@ -62,3 +62,12 @@ module Parsers =
         |> function
             | Ok x -> Ok x
             | Error(e, s) -> Error(e, state)
+
+    let map'
+        (f: 'T -> 'U)
+        (parser: State -> Result<'T * State, string * State>)
+        (state: State)
+        : Result<'U * State, string * State> =
+        match parser state with
+        | Ok(x, state) -> Ok(f x, state)
+        | Error(e, state) -> Error(e, state)

@@ -148,3 +148,89 @@ let ``repN 3`` () =
     let expected = Error("", State("#65a2ac", 0))
     let actual = repN 6 hex (State("#65a2ac", 0))
     Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``map' 1`` () =
+    let digit =
+        char' '0'
+        <|> char' '1'
+        <|> char' '2'
+        <|> char' '3'
+        <|> char' '4'
+        <|> char' '5'
+        <|> char' '6'
+        <|> char' '7'
+        <|> char' '8'
+        <|> char' '9'
+
+    let expected = Ok(1, State("123 hey!", 1))
+    let actual = map' (string >> int) digit (State("123 hey!", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``map' 2`` () =
+    let digit =
+        char' '0'
+        <|> char' '1'
+        <|> char' '2'
+        <|> char' '3'
+        <|> char' '4'
+        <|> char' '5'
+        <|> char' '6'
+        <|> char' '7'
+        <|> char' '8'
+        <|> char' '9'
+
+    let f = List.map string >> String.concat "" >> int
+
+    let expected = Ok(123, State("123 hey!", 3))
+    let actual = map' f (many digit) (State("123 hey!", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``map' 3`` () =
+    let hex =
+        char' '0'
+        <|> char' '1'
+        <|> char' '2'
+        <|> char' '3'
+        <|> char' '4'
+        <|> char' '5'
+        <|> char' '6'
+        <|> char' '7'
+        <|> char' '8'
+        <|> char' '9'
+        <|> char' 'a'
+        <|> char' 'b'
+        <|> char' 'c'
+        <|> char' 'd'
+        <|> char' 'e'
+        <|> char' 'f'
+
+    let f = List.map string >> String.concat ""
+
+    let g (x, y) = sprintf "%c%s" x (f y)
+
+    let expected = Ok("#65a2ac", State("#65a2ac", 7))
+    let actual = map' g (char' '#' <&> (repN 6 hex)) (State("#65a2ac", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``map' 4`` () =
+    let digit =
+        char' '0'
+        <|> char' '1'
+        <|> char' '2'
+        <|> char' '3'
+        <|> char' '4'
+        <|> char' '5'
+        <|> char' '6'
+        <|> char' '7'
+        <|> char' '8'
+        <|> char' '9'
+
+    let f = List.map string >> String.concat "" >> int
+
+    let expected = Error("", State("#65a2ac", 1))
+    let actual = map' f (repN 6 digit) (State("#65a2ac", 1))
+    Assert.Equal(expected, actual)
