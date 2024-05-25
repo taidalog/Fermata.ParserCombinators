@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Fermata.ParserCombinators", "Fermata.ParserCombinators\Fermata.ParserCombinators.fsproj", "{D4926F34-01A7-4FC4-B029-891F1F5CE297}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Fermata.ParserCombinators.Tests", "Fermata.ParserCombinators.Tests\Fermata.ParserCombinators.Tests.fsproj", "{AD747A03-8465-4478-818C-B9DDC0239B02}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4926F34-01A7-4FC4-B029-891F1F5CE297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4926F34-01A7-4FC4-B029-891F1F5CE297}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4926F34-01A7-4FC4-B029-891F1F5CE297}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4926F34-01A7-4FC4-B029-891F1F5CE297}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD747A03-8465-4478-818C-B9DDC0239B02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD747A03-8465-4478-818C-B9DDC0239B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD747A03-8465-4478-818C-B9DDC0239B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD747A03-8465-4478-818C-B9DDC0239B02}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

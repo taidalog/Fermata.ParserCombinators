@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>Fermata.ParserCombinators</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>taidalog</Authors>
+    <Company />
+    <Description>F# library for operations related to parser combinators. Compatible with Fable.</Description>
+    <PackageProjectUrl>https://github.com/taidalog/Fermata.ParserCombinators</PackageProjectUrl>
+    <PackageTags>F#; FSharp; fable; parser; combinator; helper; library; functional; programming</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Copyright>Copyright (c) 2024 taidalog</Copyright>
+    <RepositoryUrl>https://github.com/taidalog/Fermata.ParserCombinators.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Fermata.ParserCombinators.fsi" />
+    <Compile Include="Fermata.ParserCombinators.fs" />
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="*.fsproj; *.fs; *.fsi; *.js" PackagePath="fable\" />
+  </ItemGroup>
+
+</Project>
