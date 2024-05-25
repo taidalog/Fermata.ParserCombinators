@@ -234,3 +234,49 @@ let ``map' 4`` () =
     let expected = Error("", State("#65a2ac", 1))
     let actual = map' f (repN 6 digit) (State("#65a2ac", 1))
     Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``bind 1`` () =
+    let digit =
+        char' '0'
+        <|> char' '1'
+        <|> char' '2'
+        <|> char' '3'
+        <|> char' '4'
+        <|> char' '5'
+        <|> char' '6'
+        <|> char' '7'
+        <|> char' '8'
+        <|> char' '9'
+
+    let binder x =
+        match x with
+        | [] -> Error ""
+        | _ -> x |> List.map string |> String.concat "" |> int |> Ok
+
+    let expected = Ok(123, State("123 hey!", 3))
+    let actual = bind binder (many digit) (State("123 hey!", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``bind 2`` () =
+    let digit =
+        char' '0'
+        <|> char' '1'
+        <|> char' '2'
+        <|> char' '3'
+        <|> char' '4'
+        <|> char' '5'
+        <|> char' '6'
+        <|> char' '7'
+        <|> char' '8'
+        <|> char' '9'
+
+    let binder x =
+        match x with
+        | [] -> Error ""
+        | _ -> x |> List.map string |> String.concat "" |> int |> Ok
+
+    let expected = Error("", State("#65a2ac", 0))
+    let actual = bind binder (many digit) (State("#65a2ac", 0))
+    Assert.Equal(expected, actual)

@@ -71,3 +71,15 @@ module Parsers =
         match parser state with
         | Ok(x, state) -> Ok(f x, state)
         | Error(e, state) -> Error(e, state)
+
+    let bind
+        (binder: 'T -> Result<'U, string>)
+        (parser: State -> Result<'T * State, string * State>)
+        (state: State)
+        : Result<'U * State, string * State> =
+        match parser state with
+        | Error e -> Error e
+        | Ok(x, state') ->
+            match binder x with
+            | Ok x' -> Ok(x', state')
+            | Error e' -> Error(e', state)

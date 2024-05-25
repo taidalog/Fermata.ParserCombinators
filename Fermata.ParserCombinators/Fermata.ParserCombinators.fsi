@@ -28,3 +28,9 @@ module Parsers =
         parser: (State -> Result<'T * State, string * State>) ->
         state: State ->
             Result<'U * State, string * State>
+
+    val bind:
+        binder: ('T -> Result<'U, string>) ->
+        parser: (State -> Result<'T * State, string * State>) ->
+        state: State ->
+            Result<'U * State, string * State>
