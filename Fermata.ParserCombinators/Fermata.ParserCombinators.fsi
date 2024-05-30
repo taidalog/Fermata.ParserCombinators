@@ -445,3 +445,7 @@ module Parsers =
     /// Evaluates to <c>Error("", State("color: #65a2ac;", 7))</c>
     /// </example>
     val regex: pattern: string -> Parser<string>
+
+    /// <summary>Returns <c>Ok(unit, State)</c> if the position in <c>State</c> is at the end of the input, otherwise <c>Error</c>.</summary>
+    /// <returns>The result state.</returns>
+    val end': Parser<unit>

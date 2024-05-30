@@ -360,3 +360,21 @@ let ``regex 4`` () =
     let expected = Error("", State("color: #65a2ac;", 7))
     let actual = regex "^#[0-9A-F]{6}" (State("color: #65a2ac;", 7))
     Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``end' 1`` () =
+    let expected = Ok((), State("fsharp", 6))
+    let actual = end' (State("fsharp", 6))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``end' 2`` () =
+    let expected = Error("", State("fsharp", 0))
+    let actual = end' (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``end' 3`` () =
+    let expected = Error("", State("fsharp", 7))
+    let actual = end' (State("fsharp", 7))
+    Assert.Equal(expected, actual)

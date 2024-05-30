@@ -126,3 +126,11 @@ module Parsers =
                     Ok(m.Value, State(x, p + m.Length))
                 else
                     Error("", State(x, p))
+
+    let end': Parser<unit> =
+        fun (State(x, p)) ->
+            let len = String.length x
+
+            if p > len then Error("", State(x, p))
+            else if p = len then Ok((), State(x, p))
+            else Error("", State(x, p))
