@@ -378,3 +378,27 @@ let ``end' 3`` () =
     let expected = Error("", State("fsharp", 7))
     let actual = end' (State("fsharp", 7))
     Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``pos 1`` () =
+    let expected = Ok((), State("fsharp", 0))
+    let actual = pos (char' 'f') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``pos 2`` () =
+    let expected = Error("", State("fsharp", 0))
+    let actual = pos (char' 'c') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``neg 1`` () =
+    let expected = Ok((), State("fsharp", 0))
+    let actual = neg (char' 'c') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``neg 2`` () =
+    let expected = Error("", State("fsharp", 0))
+    let actual = neg (char' 'f') (State("fsharp", 0))
+    Assert.Equal(expected, actual)

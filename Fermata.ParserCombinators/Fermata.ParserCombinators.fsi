@@ -470,3 +470,13 @@ module Parsers =
     /// Evaluates to <c>Error("", State("fsharp", 7))</c>
     /// </example>
     val end': Parser<unit>
+
+    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(unit, State)</c> if parsing succeeded, otherwise <c>Error</c>.</summary>
+    /// <param name="parser">The input parser.</param>
+    /// <returns>The result parser.</returns>
+    val pos: parser: Parser<'T> -> Parser<unit>
+
+    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(unit, State)</c> if parsing failed, otherwise <c>Error</c>.</summary>
+    /// <param name="parser">The input parser.</param>
+    /// <returns>The result parser.</returns>
+    val neg: parser: Parser<'T> -> Parser<unit>

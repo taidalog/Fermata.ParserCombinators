@@ -134,3 +134,29 @@ module Parsers =
             if p > len then Error("", State(x, p))
             else if p = len then Ok((), State(x, p))
             else Error("", State(x, p))
+
+    let pos (parser: Parser<'T>) : Parser<unit> =
+        fun (State(x, p)) ->
+            let len = String.length x
+
+            if len = 0 then
+                Error("", State(x, p))
+            else if p >= len then
+                Error("", State(x, p))
+            else
+                match parser (State(x, p)) with
+                | Ok _ -> Ok((), State(x, p))
+                | Error _ -> Error("", State(x, p))
+
+    let neg (parser: Parser<'T>) : Parser<unit> =
+        fun (State(x, p)) ->
+            let len = String.length x
+
+            if len = 0 then
+                Error("", State(x, p))
+            else if p >= len then
+                Error("", State(x, p))
+            else
+                match parser (State(x, p)) with
+                | Ok _ -> Error("", State(x, p))
+                | Error _ -> Ok((), State(x, p))
