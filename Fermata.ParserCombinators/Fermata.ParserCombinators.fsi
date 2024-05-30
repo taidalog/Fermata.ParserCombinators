@@ -448,4 +448,25 @@ module Parsers =
 
     /// <summary>Returns <c>Ok(unit, State)</c> if the position in <c>State</c> is at the end of the input, otherwise <c>Error</c>.</summary>
     /// <returns>The result state.</returns>
+    ///
+    /// <example id="end'-1">
+    /// <code lang="fsharp">
+    /// end' (State("fsharp", 6))
+    /// </code>
+    /// Evaluates to <c>Ok((), State("fsharp", 6))</c>
+    /// </example>
+    ///
+    /// <example id="end'-2">
+    /// <code lang="fsharp">
+    /// end' (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Error("", State("fsharp", 0))</c>
+    /// </example>
+    ///
+    /// <example id="end'-3">
+    /// <code lang="fsharp">
+    /// end' (State("fsharp", 7))
+    /// </code>
+    /// Evaluates to <c>Error("", State("fsharp", 7))</c>
+    /// </example>
     val end': Parser<unit>
