@@ -474,9 +474,37 @@ module Parsers =
     /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(unit, State)</c> if parsing succeeded, otherwise <c>Error</c>.</summary>
     /// <param name="parser">The input parser.</param>
     /// <returns>The result parser.</returns>
+    ///
+    /// <example id="pos-1">
+    /// <code lang="fsharp">
+    /// pos (char' 'f') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Ok((), State("fsharp", 0))</c>
+    /// </example>
+    ///
+    /// <example id="pos-2">
+    /// <code lang="fsharp">
+    /// pos (char' 'c') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Error("", State("fsharp", 0))</c>
+    /// </example>
     val pos: parser: Parser<'T> -> Parser<unit>
 
     /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(unit, State)</c> if parsing failed, otherwise <c>Error</c>.</summary>
     /// <param name="parser">The input parser.</param>
     /// <returns>The result parser.</returns>
+    ///
+    /// <example id="neg-1">
+    /// <code lang="fsharp">
+    /// neg (char' 'c') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Ok((), State("fsharp", 0))</c>
+    /// </example>
+    ///
+    /// <example id="neg-2">
+    /// <code lang="fsharp">
+    /// neg (char' 'f') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Error("", State("fsharp", 0))</c>
+    /// </example>
     val neg: parser: Parser<'T> -> Parser<unit>
