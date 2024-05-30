@@ -402,3 +402,15 @@ let ``neg 2`` () =
     let expected = Error("", State("fsharp", 0))
     let actual = neg (char' 'f') (State("fsharp", 0))
     Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``any 1`` () =
+    let expected = Ok('f', State("fsharp", 1))
+    let actual = any (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``any 2`` () =
+    let expected = Error("", State("fsharp", 6))
+    let actual = any (State("fsharp", 6))
+    Assert.Equal(expected, actual)

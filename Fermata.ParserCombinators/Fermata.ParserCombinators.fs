@@ -160,3 +160,11 @@ module Parsers =
                 match parser (State(x, p)) with
                 | Ok _ -> Error("", State(x, p))
                 | Error _ -> Ok((), State(x, p))
+
+    let any: Parser<char> =
+        fun (State(x, p)) ->
+            let len = String.length x
+
+            if len = 0 then Error("", State(x, p))
+            else if p >= len then Error("", State(x, p))
+            else Ok(x.[p], State(x, p + 1))

@@ -508,3 +508,21 @@ module Parsers =
     /// Evaluates to <c>Error("", State("fsharp", 0))</c>
     /// </example>
     val neg: parser: Parser<'T> -> Parser<unit>
+
+    /// <summary>Takes a <c>State</s> then returns <c>Ok</c> if the input string in the state has an unread character, otherwise <c>Error</c>.</summary>
+    /// <returns>The result state.</returns>
+    ///
+    /// <example id="any-1">
+    /// <code lang="fsharp">
+    /// any (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Ok('f', State("fsharp", 1))</c>
+    /// </example>
+    ///
+    /// <example id="any-2">
+    /// <code lang="fsharp">
+    /// any (State("fsharp", 6))
+    /// </code>
+    /// Evaluates to <c>Error("", State("fsharp", 6))</c>
+    /// </example>
+    val any: Parser<char>
