@@ -53,6 +53,10 @@ For more information, please see [Fermata.ParserCombinators on NuGet Gallery](ht
 
 ## Breaking Changes
 
+### 0.2.0
+
+- Changed `Error` value returned by `Parser<'T>` to hold error information, instead of an empty string.
+
 ## Links
 
 - [Repository on GitHub](https://github.com/taidalog/Fermata.ParserCombinators)
