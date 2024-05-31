@@ -1,4 +1,4 @@
-// Fermata.ParserCombinators Version 0.1.0
+// Fermata.ParserCombinators Version 0.2.0
 // https://github.com/taidalog/Fermata.ParserCombinators
 // Copyright (c) 2024 taidalog
 // This software is licensed under the MIT License.
@@ -445,3 +445,84 @@ module Parsers =
     /// Evaluates to <c>Error("", State("color: #65a2ac;", 7))</c>
     /// </example>
     val regex: pattern: string -> Parser<string>
+
+    /// <summary>Returns <c>Ok(unit, State)</c> if the position in <c>State</c> is at the end of the input, otherwise <c>Error</c>.</summary>
+    /// <returns>The result state.</returns>
+    ///
+    /// <example id="end'-1">
+    /// <code lang="fsharp">
+    /// end' (State("fsharp", 6))
+    /// </code>
+    /// Evaluates to <c>Ok((), State("fsharp", 6))</c>
+    /// </example>
+    ///
+    /// <example id="end'-2">
+    /// <code lang="fsharp">
+    /// end' (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Error("", State("fsharp", 0))</c>
+    /// </example>
+    ///
+    /// <example id="end'-3">
+    /// <code lang="fsharp">
+    /// end' (State("fsharp", 7))
+    /// </code>
+    /// Evaluates to <c>Error("", State("fsharp", 7))</c>
+    /// </example>
+    val end': Parser<unit>
+
+    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(unit, State)</c> if parsing succeeded, otherwise <c>Error</c>.</summary>
+    /// <param name="parser">The input parser.</param>
+    /// <returns>The result parser.</returns>
+    ///
+    /// <example id="pos-1">
+    /// <code lang="fsharp">
+    /// pos (char' 'f') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Ok((), State("fsharp", 0))</c>
+    /// </example>
+    ///
+    /// <example id="pos-2">
+    /// <code lang="fsharp">
+    /// pos (char' 'c') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Error("", State("fsharp", 0))</c>
+    /// </example>
+    val pos: parser: Parser<'T> -> Parser<unit>
+
+    /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(unit, State)</c> if parsing failed, otherwise <c>Error</c>.</summary>
+    /// <param name="parser">The input parser.</param>
+    /// <returns>The result parser.</returns>
+    ///
+    /// <example id="neg-1">
+    /// <code lang="fsharp">
+    /// neg (char' 'c') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Ok((), State("fsharp", 0))</c>
+    /// </example>
+    ///
+    /// <example id="neg-2">
+    /// <code lang="fsharp">
+    /// neg (char' 'f') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Error("", State("fsharp", 0))</c>
+    /// </example>
+    val neg: parser: Parser<'T> -> Parser<unit>
+
+    /// <summary>Takes a <c>State</s> then returns <c>Ok</c> if the input string in the state has an unread character, otherwise <c>Error</c>.</summary>
+    /// <returns>The result state.</returns>
+    ///
+    /// <example id="any-1">
+    /// <code lang="fsharp">
+    /// any (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Ok('f', State("fsharp", 1))</c>
+    /// </example>
+    ///
+    /// <example id="any-2">
+    /// <code lang="fsharp">
+    /// any (State("fsharp", 6))
+    /// </code>
+    /// Evaluates to <c>Error("", State("fsharp", 6))</c>
+    /// </example>
+    val any: Parser<char>

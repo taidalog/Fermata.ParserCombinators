@@ -2,7 +2,7 @@
 
 F# library for operations related to parser combinators. Compatible with Fable.
 
-Version 0.1.0
+Version 0.2.0
 
 ## Features
 
@@ -28,13 +28,13 @@ For more information, see the signature file (`.fsi`).
 .NET CLI,
 
 ```
-dotnet add package Fermata.ParserCombinators --version 0.1.0
+dotnet add package Fermata.ParserCombinators --version 0.2.0
 ```
 
 F# Intaractive,
 
 ```
-#r "nuget: Fermata.ParserCombinators, 0.1.0"
+#r "nuget: Fermata.ParserCombinators, 0.2.0"
 ```
 
 For more information, please see [Fermata.ParserCombinators on NuGet Gallery](https://www.nuget.org/packages/Fermata.ParserCombinators).
@@ -52,6 +52,10 @@ For more information, please see [Fermata.ParserCombinators on NuGet Gallery](ht
 [Releases on GitHub](https://github.com/taidalog/Fermata.ParserCombinators/releases)
 
 ## Breaking Changes
+
+### 0.2.0
+
+- Changed `Error` value returned by `Parser<'T>` to hold error information, instead of an empty string.
 
 ## Links
 

@@ -1,4 +1,4 @@
-﻿// Fermata.ParserCombinators Version 0.1.0
+﻿// Fermata.ParserCombinators Version 0.2.0
 // https://github.com/taidalog/Fermata.ParserCombinators
 // Copyright (c) 2024 taidalog
 // This software is licensed under the MIT License.
@@ -10,14 +10,19 @@ module Parsers =
     type State = State of string * int
     type Parser<'T> = State -> Result<'T * State, string * State>
 
+    let errorsEmpty = "Input was empty."
+    let errorsExceeded = "Position exceeded input length."
+    let errorsFailed = "Parsing failed."
+    let errorsInvalid = "Argument was invalid."
+
     let char' (c: char) : Parser<char> =
         fun (State(x, p)) ->
             let len = String.length x
 
-            if len = 0 then Error("", State(x, p))
-            else if p >= len then Error("", State(x, p))
+            if len = 0 then Error(errorsEmpty, State(x, p))
+            else if p >= len then Error(errorsExceeded, State(x, p))
             else if x.[p] = c then Ok(c, State(x, p + 1))
-            else Error("", State(x, p))
+            else Error(errorsFailed, State(x, p))
 
     let (<&>) (parser1: Parser<'T>) (parser2: Parser<'U>) : Parser<'T * 'U> =
         fun (state: State) ->
@@ -100,29 +105,71 @@ module Parsers =
             let xLen = String.length x
             let sLen = String.length s
 
-            if sLen = 0 then
-                Error("", State(x, p))
-            else if xLen = 0 then
-                Error("", State(x, p))
+            if xLen = 0 then
+                Error(errorsEmpty, State(x, p))
             else if p >= xLen then
-                Error("", State(x, p))
+                Error(errorsExceeded, State(x, p))
+            else if sLen = 0 then
+                Error(errorsInvalid, State(x, p))
             else if x.[p .. p + sLen - 1] = s then
                 Ok(s, State(x, p + sLen))
             else
-                Error("", State(x, p))
+                Error("Parsing failed.", State(x, p))
 
     let regex (pattern: string) : Parser<string> =
         fun (State(x, p)) ->
             let len = String.length x
 
             if len = 0 then
-                Error("", State(x, p))
+                Error(errorsEmpty, State(x, p))
             else if p >= len then
-                Error("", State(x, p))
+                Error(errorsExceeded, State(x, p))
             else
                 let m = System.Text.RegularExpressions.Regex.Match(x.[p..], pattern)
 
                 if m.Success then
                     Ok(m.Value, State(x, p + m.Length))
                 else
-                    Error("", State(x, p))
+                    Error("Parsing failed.", State(x, p))
+
+    let end': Parser<unit> =
+        fun (State(x, p)) ->
+            let len = String.length x
+
+            if p > len then Error(errorsExceeded, State(x, p))
+            else if p = len then Ok((), State(x, p))
+            else Error("Parsing failed.", State(x, p))
+
+    let pos (parser: Parser<'T>) : Parser<unit> =
+        fun (State(x, p)) ->
+            let len = String.length x
+
+            if len = 0 then
+                Error(errorsEmpty, State(x, p))
+            else if p >= len then
+                Error(errorsExceeded, State(x, p))
+            else
+                match parser (State(x, p)) with
+                | Ok _ -> Ok((), State(x, p))
+                | Error _ -> Error("Parsing failed.", State(x, p))
+
+    let neg (parser: Parser<'T>) : Parser<unit> =
+        fun (State(x, p)) ->
+            let len = String.length x
+
+            if len = 0 then
+                Error(errorsEmpty, State(x, p))
+            else if p >= len then
+                Error(errorsExceeded, State(x, p))
+            else
+                match parser (State(x, p)) with
+                | Ok _ -> Error("Parsing failed.", State(x, p))
+                | Error _ -> Ok((), State(x, p))
+
+    let any: Parser<char> =
+        fun (State(x, p)) ->
+            let len = String.length x
+
+            if len = 0 then Error(errorsEmpty, State(x, p))
+            else if p >= len then Error(errorsExceeded, State(x, p))
+            else Ok(x.[p], State(x, p + 1))

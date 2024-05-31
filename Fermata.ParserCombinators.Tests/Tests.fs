@@ -1,4 +1,4 @@
-// Fermata.ParserCombinators Version 0.1.0
+// Fermata.ParserCombinators Version 0.2.0
 // https://github.com/taidalog/Fermata.ParserCombinators
 // Copyright (c) 2024 taidalog
 // This software is licensed under the MIT License.
@@ -24,19 +24,19 @@ let ``char' 2`` () =
 
 [<Fact>]
 let ``char' 3`` () =
-    let expected = Error("", State("fsharp", 0))
+    let expected = Error("Parsing failed.", State("fsharp", 0))
     let actual = char' 'c' (State("fsharp", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]
 let ``char' 4`` () =
-    let expected = Error("", State("fsharp", 6))
+    let expected = Error("Position exceeded input length.", State("fsharp", 6))
     let actual = char' 'x' (State("fsharp", 6))
     Assert.Equal(expected, actual)
 
 [<Fact>]
 let ``char' 5`` () =
-    let expected = Error("", State("", 0))
+    let expected = Error("Input was empty.", State("", 0))
     let actual = char' 'x' (State("", 0))
     Assert.Equal(expected, actual)
 
@@ -48,7 +48,7 @@ let ``<&> 1`` () =
 
 [<Fact>]
 let ``<&> 2`` () =
-    let expected = Error("", State("fsharp", 0))
+    let expected = Error("Parsing failed.", State("fsharp", 0))
     let actual = (char' 'f' <&> char' '#') (State("fsharp", 0))
     Assert.Equal(expected, actual)
 
@@ -60,7 +60,7 @@ let ``<&> 3`` () =
 
 [<Fact>]
 let ``<&> 4`` () =
-    let expected = Error("", State("fsharp", 0))
+    let expected = Error("Parsing failed.", State("fsharp", 0))
     let actual = (char' 'f' <&> char' 's' <&> char' 's') (State("fsharp", 0))
     Assert.Equal(expected, actual)
 
@@ -125,7 +125,7 @@ let ``<|> 2`` () =
 
 [<Fact>]
 let ``<|> 3`` () =
-    let expected = Error("", State("sharp", 0))
+    let expected = Error("Parsing failed.", State("sharp", 0))
     let actual = (char' 'f' <|> char' 'c') (State("sharp", 0))
     Assert.Equal(expected, actual)
 
@@ -193,7 +193,7 @@ let ``repeat 2`` () =
 [<Fact>]
 let ``repeat 3`` () =
     let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (<|>)
-    let expected = Error("", State("#65a2ac", 0))
+    let expected = Error("Parsing failed.", State("#65a2ac", 0))
     let actual = repeat 6 hex (State("#65a2ac", 0))
     Assert.Equal(expected, actual)
 
@@ -255,7 +255,7 @@ let ``map' 3`` () =
 let ``map' 4`` () =
     let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (<|>)
     let f = List.map string >> String.concat "" >> int
-    let expected = Error("", State("#65a2ac", 0))
+    let expected = Error("Parsing failed.", State("#65a2ac", 0))
     let actual = map' f (repeat 6 hex) (State("#65a2ac", 0))
     Assert.Equal(expected, actual)
 
@@ -288,10 +288,10 @@ let ``bind 2`` () =
 
     let binder x =
         match x with
-        | [] -> Error ""
+        | [] -> Error "Parsing failed."
         | _ -> x |> List.map string |> String.concat "" |> int |> Ok
 
-    let expected = Error("", State("#65a2ac", 0))
+    let expected = Error("Parsing failed.", State("#65a2ac", 0))
     let actual = bind binder (many digit) (State("#65a2ac", 0))
     Assert.Equal(expected, actual)
 
@@ -315,25 +315,25 @@ let ``string' 3`` () =
 
 [<Fact>]
 let ``string' 4`` () =
-    let expected = Error("", State("fsharp", 0))
+    let expected = Error("Parsing failed.", State("fsharp", 0))
     let actual = string' "csharp" (State("fsharp", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]
 let ``string' 5`` () =
-    let expected = Error("", State("fsharp", 0))
+    let expected = Error("Argument was invalid.", State("fsharp", 0))
     let actual = string' "" (State("fsharp", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]
 let ``string' 6`` () =
-    let expected = Error("", State("", 0))
+    let expected = Error("Input was empty.", State("", 0))
     let actual = string' "fsharp" (State("", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]
 let ``string' 7`` () =
-    let expected = Error("", State("", 0))
+    let expected = Error("Input was empty.", State("", 0))
     let actual = string' "" (State("", 0))
     Assert.Equal(expected, actual)
 
@@ -357,6 +357,60 @@ let ``regex 3`` () =
 
 [<Fact>]
 let ``regex 4`` () =
-    let expected = Error("", State("color: #65a2ac;", 7))
+    let expected = Error("Parsing failed.", State("color: #65a2ac;", 7))
     let actual = regex "^#[0-9A-F]{6}" (State("color: #65a2ac;", 7))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``end' 1`` () =
+    let expected = Ok((), State("fsharp", 6))
+    let actual = end' (State("fsharp", 6))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``end' 2`` () =
+    let expected = Error("Parsing failed.", State("fsharp", 0))
+    let actual = end' (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``end' 3`` () =
+    let expected = Error("Position exceeded input length.", State("fsharp", 7))
+    let actual = end' (State("fsharp", 7))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``pos 1`` () =
+    let expected = Ok((), State("fsharp", 0))
+    let actual = pos (char' 'f') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``pos 2`` () =
+    let expected = Error("Parsing failed.", State("fsharp", 0))
+    let actual = pos (char' 'c') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``neg 1`` () =
+    let expected = Ok((), State("fsharp", 0))
+    let actual = neg (char' 'c') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``neg 2`` () =
+    let expected = Error("Parsing failed.", State("fsharp", 0))
+    let actual = neg (char' 'f') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``any 1`` () =
+    let expected = Ok('f', State("fsharp", 1))
+    let actual = any (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``any 2`` () =
+    let expected = Error("Position exceeded input length.", State("fsharp", 6))
+    let actual = any (State("fsharp", 6))
     Assert.Equal(expected, actual)
