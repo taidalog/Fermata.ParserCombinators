@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>Fermata.ParserCombinators</PackageId>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Authors>taidalog</Authors>
     <Company />
     <Description>F# library for operations related to parser combinators. Compatible with Fable.</Description>
