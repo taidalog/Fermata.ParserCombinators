@@ -488,6 +488,34 @@ module Parsers =
     /// </code>
     /// Evaluates to <c>Error("", State("fsharp", 0))</c>
     /// </example>
+    ///
+    /// <example id="pos-3">
+    /// <code lang="fsharp">
+    /// (string' "fsharp" <&> pos end') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Ok(("fsharp", ()), State("fsharp", 6))</c>
+    /// </example>
+    ///
+    /// <example id="pos-4">
+    /// <code lang="fsharp">
+    /// (string' "fsharp" <+&> pos end') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Ok("fsharp", State("fsharp", 6))</c>
+    /// </example>
+    ///
+    /// <example id="pos-5">
+    /// <code lang="fsharp">
+    /// (string' "fsharp" <&> pos end') (State("fsharp!", 0))
+    /// </code>
+    /// Evaluates to <c>Error("Parsing failed.", State("fsharp!", 0))</c>
+    /// </example>
+    ///
+    /// <example id="pos-6">
+    /// <code lang="fsharp">
+    /// pos end' (State("", 0))
+    /// </code>
+    /// Evaluates to <c>Ok((), State("", 0))</c>
+    /// </example>
     val pos: parser: Parser<'T> -> Parser<unit>
 
     /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(unit, State)</c> if parsing failed, otherwise <c>Error</c>.</summary>
@@ -506,6 +534,34 @@ module Parsers =
     /// neg (char' 'f') (State("fsharp", 0))
     /// </code>
     /// Evaluates to <c>Error("", State("fsharp", 0))</c>
+    /// </example>
+    ///
+    /// <example id="neg-3">
+    /// <code lang="fsharp">
+    /// (string' "fsharp" <&> neg end') (State("fsharp!", 0))
+    /// </code>
+    /// Evaluates to <c>Ok(("fsharp", ()), State("fsharp!", 6))</c>
+    /// </example>
+    ///
+    /// <example id="neg-4">
+    /// <code lang="fsharp">
+    /// (string' "fsharp" <+&> neg end') (State("fsharp!", 0))
+    /// </code>
+    /// Evaluates to <c>Ok("fsharp", State("fsharp!", 6))</c>
+    /// </example>
+    ///
+    /// <example id="neg-5">
+    /// <code lang="fsharp">
+    /// (string' "fsharp" <+&> neg end') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Error("Parsing failed.", State("fsharp", 0))</c>
+    /// </example>
+    ///
+    /// <example id="neg-6">
+    /// <code lang="fsharp">
+    /// neg end' (State("", 0))
+    /// </code>
+    /// Evaluates to <c>Error("Parsing failed.", State("", 0))</c>
     /// </example>
     val neg: parser: Parser<'T> -> Parser<unit>
 
