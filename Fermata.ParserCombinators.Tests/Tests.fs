@@ -1,4 +1,4 @@
-// Fermata.ParserCombinators Version 0.2.0
+// Fermata.ParserCombinators Version 0.3.0
 // https://github.com/taidalog/Fermata.ParserCombinators
 // Copyright (c) 2024 taidalog
 // This software is licensed under the MIT License.
@@ -392,6 +392,30 @@ let ``pos 2`` () =
     Assert.Equal(expected, actual)
 
 [<Fact>]
+let ``pos 3`` () =
+    let expected = Ok(("fsharp", ()), State("fsharp", 6))
+    let actual = (string' "fsharp" <&> pos end') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``pos 4`` () =
+    let expected = Ok("fsharp", State("fsharp", 6))
+    let actual = (string' "fsharp" <+&> pos end') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``pos 5`` () =
+    let expected = Error("Parsing failed.", State("fsharp!", 0))
+    let actual = (string' "fsharp" <&> pos end') (State("fsharp!", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``pos 6`` () =
+    let expected = Ok((), State("", 0))
+    let actual = pos end' (State("", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
 let ``neg 1`` () =
     let expected = Ok((), State("fsharp", 0))
     let actual = neg (char' 'c') (State("fsharp", 0))
@@ -401,6 +425,30 @@ let ``neg 1`` () =
 let ``neg 2`` () =
     let expected = Error("Parsing failed.", State("fsharp", 0))
     let actual = neg (char' 'f') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``neg 3`` () =
+    let expected = Ok(("fsharp", ()), State("fsharp!", 6))
+    let actual = (string' "fsharp" <&> neg end') (State("fsharp!", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``neg 4`` () =
+    let expected = Ok("fsharp", State("fsharp!", 6))
+    let actual = (string' "fsharp" <+&> neg end') (State("fsharp!", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``neg 5`` () =
+    let expected = Error("Parsing failed.", State("fsharp", 0))
+    let actual = (string' "fsharp" <+&> neg end') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``neg 6`` () =
+    let expected = Error("Parsing failed.", State("", 0))
+    let actual = neg end' (State("", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]

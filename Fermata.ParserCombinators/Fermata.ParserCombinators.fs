@@ -1,4 +1,4 @@
-﻿// Fermata.ParserCombinators Version 0.2.0
+﻿// Fermata.ParserCombinators Version 0.3.0
 // https://github.com/taidalog/Fermata.ParserCombinators
 // Copyright (c) 2024 taidalog
 // This software is licensed under the MIT License.
@@ -141,30 +141,16 @@ module Parsers =
             else Error("Parsing failed.", State(x, p))
 
     let pos (parser: Parser<'T>) : Parser<unit> =
-        fun (State(x, p)) ->
-            let len = String.length x
-
-            if len = 0 then
-                Error(errorsEmpty, State(x, p))
-            else if p >= len then
-                Error(errorsExceeded, State(x, p))
-            else
-                match parser (State(x, p)) with
-                | Ok _ -> Ok((), State(x, p))
-                | Error _ -> Error("Parsing failed.", State(x, p))
+        fun state ->
+            match parser state with
+            | Ok _ -> Ok((), state)
+            | Error _ -> Error("Parsing failed.", state)
 
     let neg (parser: Parser<'T>) : Parser<unit> =
-        fun (State(x, p)) ->
-            let len = String.length x
-
-            if len = 0 then
-                Error(errorsEmpty, State(x, p))
-            else if p >= len then
-                Error(errorsExceeded, State(x, p))
-            else
-                match parser (State(x, p)) with
-                | Ok _ -> Error("Parsing failed.", State(x, p))
-                | Error _ -> Ok((), State(x, p))
+        fun state ->
+            match parser state with
+            | Ok _ -> Error("Parsing failed.", state)
+            | Error _ -> Ok((), state)
 
     let any: Parser<char> =
         fun (State(x, p)) ->
