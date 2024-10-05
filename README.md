@@ -57,6 +57,10 @@ For more information, please see [Fermata.ParserCombinators on NuGet Gallery](ht
 
 - Changed `Error` value returned by `Parser<'T>` to hold error information, instead of an empty string.
 
+### 0.3.0
+
+- Removed validation from `pos` and `neg` parsers so that they can work with `end'` parser.
+
 ## Links
 
 - [Repository on GitHub](https://github.com/taidalog/Fermata.ParserCombinators)
