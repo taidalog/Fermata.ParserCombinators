@@ -9,7 +9,20 @@ namespace Fermata.ParserCombinators
 module Parsers =
 
     type State = State of string * int
-    type Parser<'T> = State -> Result<'T * State, string * State>
+
+    type Parser<'T> =
+        | Parser of (State -> Result<'T * State, string * State>)
+
+        static member (*): parser1: Parser<'T> * parser2: Parser<'U> -> Parser<'T * 'U>
+        static member (+): parser1: Parser<'T> * parser2: Parser<'T> -> Parser<'T>
+        static member (*): parser: Parser<'T> * count: int -> Parser<'T list>
+        member Many: unit -> Parser<'T list>
+
+    /// <summary></summary>
+    /// <param name="p"></param>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    val exec: p: Parser<'T> -> s: State -> Result<'T * State, string * State>
 
     /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the charactor at the specified position in the string in <c>State</c> matches <c>c</c>, otherwise <c>Error</c>.</summary>
     /// <param name="c">The input <c>char</c>.</param>
