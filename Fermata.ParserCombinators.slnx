@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Fermata.ParserCombinators.Tests/Fermata.ParserCombinators.Tests.fsproj" />
+  <Project Path="Fermata.ParserCombinators/Fermata.ParserCombinators.fsproj" />
+</Solution>
