@@ -57,6 +57,32 @@ module Parsers =
                     | Error(e, _) -> Error(e, state)
             |> Parser
 
+        static member (<*)(parser1: Parser<'T>, parser2: Parser<'U>) : Parser<'T> =
+            fun (state: State) ->
+                let (Parser p1) = parser1
+                let (Parser p2) = parser2
+
+                match p1 state with
+                | Error(e1, _) -> Error(e1, state)
+                | Ok(v1, state1) ->
+                    match p2 state1 with
+                    | Error(e2, _) -> Error(e2, state)
+                    | Ok(_, state2) -> Ok(v1, state2)
+            |> Parser
+
+        static member (>*)(parser1: Parser<'T>, parser2: Parser<'U>) : Parser<'U> =
+            fun (state: State) ->
+                let (Parser p1) = parser1
+                let (Parser p2) = parser2
+
+                match p1 state with
+                | Error(e1, _) -> Error(e1, state)
+                | Ok(_, state1) ->
+                    match p2 state1 with
+                    | Error(e2, _) -> Error(e2, state)
+                    | Ok(v2, state2) -> Ok(v2, state2)
+            |> Parser
+
         member x.Many() : Parser<'T list> =
             fun (state: State) ->
                 let (Parser parser) = x
@@ -90,31 +116,9 @@ module Parsers =
 
     let (<&>) (parser1: Parser<'T>) (parser2: Parser<'U>) : Parser<'T * 'U> = parser1 * parser2
 
-    let (<+&>) (parser1: Parser<'T>) (parser2: Parser<'U>) : Parser<'T> =
-        fun (state: State) ->
-            let (Parser p1) = parser1
-            let (Parser p2) = parser2
+    let (<+&>) (parser1: Parser<'T>) (parser2: Parser<'U>) : Parser<'T> = parser1 <* parser2
 
-            match p1 state with
-            | Error(e1, _) -> Error(e1, state)
-            | Ok(v1, state1) ->
-                match p2 state1 with
-                | Error(e2, _) -> Error(e2, state)
-                | Ok(_, state2) -> Ok(v1, state2)
-        |> Parser
-
-    let (<&+>) (parser1: Parser<'T>) (parser2: Parser<'U>) : Parser<'U> =
-        fun (state: State) ->
-            let (Parser p1) = parser1
-            let (Parser p2) = parser2
-
-            match p1 state with
-            | Error(e1, _) -> Error(e1, state)
-            | Ok(_, state1) ->
-                match p2 state1 with
-                | Error(e2, _) -> Error(e2, state)
-                | Ok(v2, state2) -> Ok(v2, state2)
-        |> Parser
+    let (<&+>) (parser1: Parser<'T>) (parser2: Parser<'U>) : Parser<'U> = parser1 >* parser2
 
     let (<|>) (parser1: Parser<'T>) (parser2: Parser<'T>) : Parser<'T> = parser1 + parser2
 

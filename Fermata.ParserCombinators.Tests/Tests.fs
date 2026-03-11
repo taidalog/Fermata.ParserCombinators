@@ -18,13 +18,23 @@ let ``*`` (a: char) (b: char) (c: string) (d: int) =
     let actual = exec (char' a * char' b) (State(c, 0))
     Assert.Equal(expected, actual)
 
-// [<Theory>]
-// [<InlineData('f', "fsharp", 1, 0)>]
-// [<InlineData('s', "fsharp", 2, 1)>]
-// let ``char'`` (a: char) (b: string) (c: int) (d: int) =
-//     let expected = Ok(a, State(b, c))
-//     let actual = exec (char' a) (State(b, d))
-//     Assert.Equal(expected, actual)
+[<Fact>]
+let ``+ 1`` () =
+    let expected = Ok('f', State("fsharp", 1))
+    let actual = exec (char' 'c' + char' 'f') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``<* 1`` () =
+    let expected = Ok('f', State("fsharp", 2))
+    let actual = exec (char' 'f' <* char' 's') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``>* 1`` () =
+    let expected = Ok('s', State("fsharp", 2))
+    let actual = exec (char' 'f' >* char' 's') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
 
 [<Fact>]
 let ``char' 1`` () =

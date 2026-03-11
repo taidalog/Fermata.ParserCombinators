@@ -16,6 +16,8 @@ module Parsers =
         static member (*): parser1: Parser<'T> * parser2: Parser<'U> -> Parser<'T * 'U>
         static member (+): parser1: Parser<'T> * parser2: Parser<'T> -> Parser<'T>
         static member (*): parser: Parser<'T> * count: int -> Parser<'T list>
+        static member (<*): parser1: Parser<'T> * parser2: Parser<'U> -> Parser<'T>
+        static member (>*): parser1: Parser<'T> * parser2: Parser<'U> -> Parser<'U>
         member Many: unit -> Parser<'T list>
 
     /// <summary></summary>
