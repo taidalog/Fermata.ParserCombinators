@@ -19,9 +19,45 @@ let ``*`` (a: char) (b: char) (c: string) (d: int) =
     Assert.Equal(expected, actual)
 
 [<Fact>]
+let ``* 1`` () =
+    let expected = Ok(('f', 's'), State("fsharp", 2))
+    let actual = exec (char' 'f' * char' 's') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``* 2`` () =
+    let expected = Error("Parsing failed.", State("fsharp", 0))
+    let actual = exec (char' 'f' * char' '#') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``* 3`` () =
+    let expected = Ok((('f', 's'), 'h'), State("fsharp", 3))
+    let actual = exec (char' 'f' * char' 's' * char' 'h') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``* 4`` () =
+    let expected = Error("Parsing failed.", State("fsharp", 0))
+    let actual = exec (char' 'f' * char' 's' * char' 's') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
 let ``+ 1`` () =
     let expected = Ok('f', State("fsharp", 1))
-    let actual = exec (char' 'c' + char' 'f') (State("fsharp", 0))
+    let actual = exec (char' 'f' <|> char' 'c') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``+ 2`` () =
+    let expected = Ok('c', State("csharp", 1))
+    let actual = exec (char' 'f' <|> char' 'c') (State("csharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``+ 3`` () =
+    let expected = Error("Parsing failed.", State("sharp", 0))
+    let actual = exec (char' 'f' <|> char' 'c') (State("sharp", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]
@@ -31,9 +67,112 @@ let ``<* 1`` () =
     Assert.Equal(expected, actual)
 
 [<Fact>]
+let ``<* 2`` () =
+    let digit = [ '0' .. '9' ] |> List.map char' |> List.reduce (+)
+
+    let number =
+        let f = List.map string >> String.concat "" >> int
+        map' f (many digit)
+
+    let expected = Ok(100, State("100 yen", 7))
+    let actual = exec (number <* string' " yen") (State("100 yen", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
 let ``>* 1`` () =
     let expected = Ok('s', State("fsharp", 2))
     let actual = exec (char' 'f' >* char' 's') (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``>* 2`` () =
+    let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (+)
+
+    let hexCode =
+        let f (x, y) =
+            sprintf "%c%s" x ((List.map string >> String.concat "") y)
+
+        map' f (char' '#' * repeat 6 hex)
+
+    let expected = Ok("#65a2ac", State("color: #65a2ac", 14))
+    let actual = exec (string' "color: " >* hexCode) (State("color: #65a2ac", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``>* 3`` () =
+    let expected = Ok("taidalog", State("I'm taidalog.", 13))
+
+    let actual =
+        exec (string' "I'm " >* string' "taidalog" <* char' '.') (State("I'm taidalog.", 0))
+
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``Parser<'T> * int 1`` () =
+    let expected = Ok([ 'w'; 'w'; 'w' ], State("www.~.com", 3))
+    let actual = exec ((char' 'w') * 3) (State("www.~.com", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``Parser<'T> * int 2`` () =
+    let hex =
+        char' '0'
+        + char' '1'
+        + char' '2'
+        + char' '3'
+        + char' '4'
+        + char' '5'
+        + char' '6'
+        + char' '7'
+        + char' '8'
+        + char' '9'
+        + char' 'a'
+        + char' 'b'
+        + char' 'c'
+        + char' 'd'
+        + char' 'e'
+        + char' 'f'
+
+    let expected = Ok([ '6'; '5'; 'a'; '2'; 'a'; 'c' ], State("#65a2ac", 7))
+    let actual = exec (hex * 6) (State("#65a2ac", 1))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``Parser<'T> * int 3`` () =
+    let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (+)
+    let expected = Error("Parsing failed.", State("#65a2ac", 0))
+    let actual = exec (hex * 6) (State("#65a2ac", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``Parser<'T>.Many() 1`` () =
+    let expected = Ok([ 'w'; 'w'; 'w' ], State("www.taida.com", 3))
+    let actual = exec ((char' 'w').Many()) (State("www.taida.com", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``Parser<'T>.Many() 2`` () =
+    let digit =
+        char' '0'
+        + char' '1'
+        + char' '2'
+        + char' '3'
+        + char' '4'
+        + char' '5'
+        + char' '6'
+        + char' '7'
+        + char' '8'
+        + char' '9'
+
+    let expected = Ok([ '1'; '2'; '3' ], State("123 hey!", 3))
+    let actual = exec (digit.Many()) (State("123 hey!", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``Parser<'T>.Many() 3`` () =
+    let abc = char' 'a' + char' 'b' + char' 'c'
+    let expected = Ok([], State("123 hey!", 0))
+    let actual = exec (abc.Many()) (State("123 hey!", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]
