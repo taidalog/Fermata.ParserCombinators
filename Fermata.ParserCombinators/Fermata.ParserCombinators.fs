@@ -38,25 +38,6 @@ module Parsers =
                     | Error e -> Error e
             |> Parser
 
-        static member (*)(parser: Parser<'T>, count: int) : Parser<'T list> =
-            let rec foldWhileOk x acc (list: Parser<'T> list) =
-                match list with
-                | [] -> Ok(List.rev acc, x)
-                | h :: t ->
-                    let (Parser h') = h
-
-                    match h' x with
-                    | Error e -> Error e
-                    | Ok(v, x') -> foldWhileOk x' (v :: acc) t
-
-            fun (state: State) ->
-                List.replicate count parser
-                |> foldWhileOk state []
-                |> function
-                    | Ok v -> Ok v
-                    | Error(e, _) -> Error(e, state)
-            |> Parser
-
         static member (<*)(parser1: Parser<'T>, parser2: Parser<'U>) : Parser<'T> =
             fun (state: State) ->
                 let (Parser p1) = parser1
@@ -81,6 +62,44 @@ module Parsers =
                     match p2 state1 with
                     | Error(e2, _) -> Error(e2, state)
                     | Ok(v2, state2) -> Ok(v2, state2)
+            |> Parser
+
+        static member (*)(parser: Parser<'T>, count: int) : Parser<'T list> =
+            let rec foldWhileOk x acc (list: Parser<'T> list) =
+                match list with
+                | [] -> Ok(List.rev acc, x)
+                | h :: t ->
+                    let (Parser h') = h
+
+                    match h' x with
+                    | Error e -> Error e
+                    | Ok(v, x') -> foldWhileOk x' (v :: acc) t
+
+            fun (state: State) ->
+                List.replicate count parser
+                |> foldWhileOk state []
+                |> function
+                    | Ok v -> Ok v
+                    | Error(e, _) -> Error(e, state)
+            |> Parser
+
+        static member (*)(count: int, parser: Parser<'T>) : Parser<'T list> =
+            let rec foldWhileOk x acc (list: Parser<'T> list) =
+                match list with
+                | [] -> Ok(List.rev acc, x)
+                | h :: t ->
+                    let (Parser h') = h
+
+                    match h' x with
+                    | Error e -> Error e
+                    | Ok(v, x') -> foldWhileOk x' (v :: acc) t
+
+            fun (state: State) ->
+                List.replicate count parser
+                |> foldWhileOk state []
+                |> function
+                    | Ok v -> Ok v
+                    | Error(e, _) -> Error(e, state)
             |> Parser
 
         member x.Many() : Parser<'T list> =
