@@ -13,11 +13,250 @@ module Parsers =
     type Parser<'T> =
         | Parser of (State -> Result<'T * State, string * State>)
 
+        /// <summary>Combines two parsers and returns a new parser that returns <c>Ok</c> if both input parsers succeed, otherwise <c>Error</c>.</summary>
+        /// <param name="parser1">The first input parser.</param>
+        /// <param name="parser2">The second input parser.</param>
+        /// <returns>The result parser.</returns>
+        ///
+        /// <example id="*-1">
+        /// <code lang="fsharp">
+        /// exec (char' 'f' * char' 's') (State("fsharp", 0))
+        /// </code>
+        /// Evaluates to <c>Ok(('f', 's'), State("fsharp", 2))</c>
+        /// </example>
+        ///
+        /// <example id="*-2">
+        /// <code lang="fsharp">
+        /// exec (char' 'f' * char' '#') (State("fsharp", 0))
+        /// </code>
+        /// Evaluates to <c>Error("Parsing failed.", State("fsharp", 0))</c>
+        /// </example>
+        ///
+        /// <example id="*-3">
+        /// <code lang="fsharp">
+        /// exec (char' 'f' * char' 's' * char' 'h') (State("fsharp", 0))
+        /// </code>
+        /// Evaluates to <c>Ok((('f', 's'), 'h'), State("fsharp", 3))</c>
+        /// </example>
+        ///
+        /// <example id="*-4">
+        /// <code lang="fsharp">
+        /// exec (char' 'f' * char' 's' * char' 's') (State("fsharp", 0))
+        /// </code>
+        /// Evaluates to <c>Error("Parsing failed.", State("fsharp", 0))</c>
+        /// </example>
         static member (*): parser1: Parser<'T> * parser2: Parser<'U> -> Parser<'T * 'U>
+
+        /// <summary>Combines two parsers and returns a new parser that returns <c>Ok</c> if either input parsers succeeds, otherwise <c>Error</c>.</summary>
+        /// <param name="parser1">The first input parser.</param>
+        /// <param name="parser2">The second input parser.</param>
+        /// <returns>The result parser.</returns>
+        ///
+        /// <example id="+-1">
+        /// <code lang="fsharp">
+        /// exec (char' 'f' + char' 'c') (State("fsharp", 0))
+        /// </code>
+        /// Evaluates to <c>Ok('f', State("fsharp", 1))</c>
+        /// </example>
+        ///
+        /// <example id="+-2">
+        /// <code lang="fsharp">
+        /// exec (char' 'f' + char' 'c') (State("csharp", 0))
+        /// </code>
+        /// Evaluates to <c>Ok('c', State("csharp", 1))</c>
+        /// </example>
+        ///
+        /// <example id="+-3">
+        /// <code lang="fsharp">
+        /// exec (char' 'f' + char' 'c') (State("sharp", 0))
+        /// </code>
+        /// Evaluates to <c>Error("Parsing failed.", State("sharp", 0))</c>
+        /// </example>
         static member (+): parser1: Parser<'T> * parser2: Parser<'T> -> Parser<'T>
-        static member (*): parser: Parser<'T> * count: int -> Parser<'T list>
+
+        /// <summary>Combines two parsers and returns a new parser that returns <c>Ok</c> and only the first value if both input parsers succeed, otherwise <c>Error</c>.</summary>
+        /// <param name="parser1">The first input parser.</param>
+        /// <param name="parser2">The second input parser.</param>
+        /// <returns>The result parser.</returns>
+        ///
+        /// <example id="<* 1">
+        /// <code lang="fsharp">
+        /// exec (char' 'f' <* char' 's') (State("fsharp", 0))
+        /// </code>
+        /// Evaluates to <c>Ok('f', State("fsharp", 2))</c>
+        /// </example>
+        ///
+        /// <example id="<* 2">
+        /// <code lang="fsharp">
+        /// let digit = [ '0' .. '9' ] |> List.map char' |> List.reduce (+)
+        /// let number =
+        ///     let f = List.map string >> String.concat "" >> int
+        ///     map' f (many digit)
+        /// exec (number <* string' " yen") (State("100 yen", 0))
+        /// </code>
+        /// Evaluates to <c>Ok(100, State("100 yen", 7))</c>
+        /// </example>
         static member (<*): parser1: Parser<'T> * parser2: Parser<'U> -> Parser<'T>
+
+        /// <summary>Combines two parsers and returns a new parser that returns <c>Ok</c> and only the second value if both input parsers succeed, otherwise <c>Error</c>.</summary>
+        /// <param name="parser1">The first input parser.</param>
+        /// <param name="parser2">The second input parser.</param>
+        /// <returns>The result parser.</returns>
+        ///
+        /// <example id=">* 1">
+        /// <code lang="fsharp">
+        /// exec (char' 'f' >* char' 's') (State("fsharp", 0))
+        /// </code>
+        /// Evaluates to <c>Ok('s', State("fsharp", 2))</c>
+        /// </example>
+        ///
+        /// <example id=">* 2">
+        /// <code lang="fsharp">
+        /// let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (+)
+        /// let hexCode =
+        ///     let f (x, y) =
+        ///         sprintf "%c%s" x ((List.map string >> String.concat "") y)
+        ///
+        ///     map' f (char' '#' * (hex * 6))
+        /// exec (string' "color: " >* hexCode) (State("color: #65a2ac", 0))
+        /// </code>
+        /// Evaluates to <c>Ok("#65a2ac", State("color: #65a2ac", 14))</c>
+        /// </example>
+        ///
+        /// <example id=">* 3">
+        /// <code lang="fsharp">
+        /// exec (string' "I'm " >* string' "taidalog" <* char' '.') (State("I'm taidalog.", 0))
+        /// </code>
+        /// Evaluates to <c>Ok("taidalog", State("I'm taidalog.", 13))</c>
+        /// </example>
         static member (>*): parser1: Parser<'T> * parser2: Parser<'U> -> Parser<'U>
+
+        /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>repeat</c> succeeds just <c>n</c> times, otherwise <c>Error</c>.</summary>
+        /// <param name="parser">The input parser.</param>
+        /// <param name="count">The number of times to parse.</param>
+        /// <returns>The result parser.</returns>
+        ///
+        /// <example id="Parser<'T> * int 1">
+        /// <code lang="fsharp">
+        /// exec ((char' 'w') * 3) (State("www.~.com", 0))
+        /// </code>
+        /// Evaluates to <c>Ok([ 'w'; 'w'; 'w' ], State("www.~.com", 3))</c>
+        /// </example>
+        ///
+        /// <example id="Parser<'T> * int 2">
+        /// <code lang="fsharp">
+        /// let hex =
+        ///     char' '0'
+        ///     + char' '1'
+        ///     + char' '2'
+        ///     + char' '3'
+        ///     + char' '4'
+        ///     + char' '5'
+        ///     + char' '6'
+        ///     + char' '7'
+        ///     + char' '8'
+        ///     + char' '9'
+        ///     + char' 'a'
+        ///     + char' 'b'
+        ///     + char' 'c'
+        ///     + char' 'd'
+        ///     + char' 'e'
+        ///     + char' 'f'
+        /// exec (hex * 6) (State("#65a2ac", 1))
+        /// </code>
+        /// Evaluates to <c>Ok([ '6'; '5'; 'a'; '2'; 'a'; 'c' ], State("#65a2ac", 7))</c>
+        /// </example>
+        ///
+        /// <example id="Parser<'T> * int 3">
+        /// <code lang="fsharp">
+        /// let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (+)
+        /// exec (hex * 6) (State("#65a2ac", 0))
+        /// </code>
+        /// Evaluates to <c>Error("Parsing failed.", State("#65a2ac", 0))</c>
+        /// </example>
+        static member (*): parser: Parser<'T> * count: int -> Parser<'T list>
+
+        /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>repeat</c> succeeds just <c>n</c> times, otherwise <c>Error</c>.</summary>
+        /// <param name="count">The number of times to parse.</param>
+        /// <param name="parser">The input parser.</param>
+        /// <returns>The result parser.</returns>
+        ///
+        /// <example id="int * Parser<'T> 1">
+        /// <code lang="fsharp">
+        /// exec (3 * (char' 'w')) (State("www.~.com", 0))
+        /// </code>
+        /// Evaluates to <c>Ok([ 'w'; 'w'; 'w' ], State("www.~.com", 3))</c>
+        /// </example>
+        ///
+        /// <example id="int * Parser<'T> 2">
+        /// <code lang="fsharp">
+        /// let hex =
+        ///     char' '0'
+        ///     + char' '1'
+        ///     + char' '2'
+        ///     + char' '3'
+        ///     + char' '4'
+        ///     + char' '5'
+        ///     + char' '6'
+        ///     + char' '7'
+        ///     + char' '8'
+        ///     + char' '9'
+        ///     + char' 'a'
+        ///     + char' 'b'
+        ///     + char' 'c'
+        ///     + char' 'd'
+        ///     + char' 'e'
+        ///     + char' 'f'
+        /// exec (6 * hex) (State("#65a2ac", 1))
+        /// </code>
+        /// Evaluates to <c>Ok([ '6'; '5'; 'a'; '2'; 'a'; 'c' ], State("#65a2ac", 7))</c>
+        /// </example>
+        ///
+        /// <example id="int * Parser<'T> 3">
+        /// <code lang="fsharp">
+        /// let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (+)
+        /// exec (6 * hex) (State("#65a2ac", 0))
+        /// </code>
+        /// Evaluates to <c>Error("Parsing failed.", State("#65a2ac", 0))</c>
+        /// </example>
+        static member (*): count: int * parser: Parser<'T> -> Parser<'T list>
+
+        /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the <c>parser</c> succeeds more than 0 times.</summary>
+        /// <param name="parser">The input parser.</param>
+        /// <returns>The result parser.</returns>
+        ///
+        /// <example id="Parser<'T>.Many()-1">
+        /// <code lang="fsharp">
+        /// exec ((char' 'w').Many()) (State("www.taida.com", 0))
+        /// </code>
+        /// Evaluates to <c>Ok([ 'w'; 'w'; 'w' ], State("www.taida.com", 3))</c>
+        /// </example>
+        ///
+        /// <example id="Parser<'T>.Many()-2">
+        /// <code lang="fsharp">
+        /// let digit =
+        ///     char' '0'
+        ///     + char' '1'
+        ///     + char' '2'
+        ///     + char' '3'
+        ///     + char' '4'
+        ///     + char' '5'
+        ///     + char' '6'
+        ///     + char' '7'
+        ///     + char' '8'
+        ///     + char' '9'
+        /// exec (digit.Many()) (State("123 hey!", 0))
+        /// </code>
+        /// Evaluates to <c>Ok([ '1'; '2'; '3' ], State("123 hey!", 3))</c>
+        /// </example>
+        ///
+        /// <example id="Parser<'T>.Many()-3">
+        /// <code lang="fsharp">
+        /// let abc = char' 'a' + char' 'b' + char' 'c'
+        /// exec (abc.Many()) (State("123 hey!", 0))
+        /// </code>
+        /// Evaluates to <c>Ok([], State("123 hey!", 0))</c>
+        /// </example>
         member Many: unit -> Parser<'T list>
 
     /// <summary></summary>

@@ -92,7 +92,7 @@ let ``>* 2`` () =
         let f (x, y) =
             sprintf "%c%s" x ((List.map string >> String.concat "") y)
 
-        map' f (char' '#' * repeat 6 hex)
+        map' f (char' '#' * (hex * 6))
 
     let expected = Ok("#65a2ac", State("color: #65a2ac", 14))
     let actual = exec (string' "color: " >* hexCode) (State("color: #65a2ac", 0))
@@ -142,6 +142,43 @@ let ``Parser<'T> * int 3`` () =
     let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (+)
     let expected = Error("Parsing failed.", State("#65a2ac", 0))
     let actual = exec (hex * 6) (State("#65a2ac", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``int * Parser<'T> 1`` () =
+    let expected = Ok([ 'w'; 'w'; 'w' ], State("www.~.com", 3))
+    let actual = exec (3 * (char' 'w')) (State("www.~.com", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``int * Parser<'T> 2`` () =
+    let hex =
+        char' '0'
+        + char' '1'
+        + char' '2'
+        + char' '3'
+        + char' '4'
+        + char' '5'
+        + char' '6'
+        + char' '7'
+        + char' '8'
+        + char' '9'
+        + char' 'a'
+        + char' 'b'
+        + char' 'c'
+        + char' 'd'
+        + char' 'e'
+        + char' 'f'
+
+    let expected = Ok([ '6'; '5'; 'a'; '2'; 'a'; 'c' ], State("#65a2ac", 7))
+    let actual = exec (6 * hex) (State("#65a2ac", 1))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``int * Parser<'T> 3`` () =
+    let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (+)
+    let expected = Error("Parsing failed.", State("#65a2ac", 0))
+    let actual = exec (6 * hex) (State("#65a2ac", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]
