@@ -174,6 +174,20 @@ module Parsers =
         /// </code>
         /// Evaluates to <c>Error("Parsing failed.", State("#65a2ac", 0))</c>
         /// </example>
+        ///
+        /// <example id="Parser<'T> * int 4">
+        /// <code lang="fsharp">
+        /// exec (char' 'x' * 0) (State("123", 0))
+        /// </code>
+        /// Evaluates to <c>Ok([], State("123", 0))</c>
+        /// </example>
+        ///
+        /// <example id="Parser<'T> * int 5">
+        /// <code lang="fsharp">
+        /// exec (char' '0' * -1) (State("123", 0))
+        /// </code>
+        /// Evaluates to <c>Error("Argument was invalid.", State("123", 0))</c>
+        /// </example>
         static member (*): parser: Parser<'T> * count: int -> Parser<'T list>
 
         /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the parser given to <c>repeat</c> succeeds just <c>n</c> times, otherwise <c>Error</c>.</summary>
@@ -218,6 +232,20 @@ module Parsers =
         /// exec (6 * hex) (State("#65a2ac", 0))
         /// </code>
         /// Evaluates to <c>Error("Parsing failed.", State("#65a2ac", 0))</c>
+        /// </example>
+        ///
+        /// <example id="int * Parser<'T> 4">
+        /// <code lang="fsharp">
+        /// exec (0 * char' 'x') (State("123", 0))
+        /// </code>
+        /// Evaluates to <c>Ok([], State("123", 0))</c>
+        /// </example>
+        ///
+        /// <example id="int * Parser<'T> 5">
+        /// <code lang="fsharp">
+        /// exec (-1 * char' '0') (State("123", 0))
+        /// </code>
+        /// Evaluates to <c>Error("Argument was invalid.", State("123", 0))</c>
         /// </example>
         static member (*): count: int * parser: Parser<'T> -> Parser<'T list>
 

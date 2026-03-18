@@ -145,6 +145,18 @@ let ``Parser<'T> * int 3`` () =
     Assert.Equal(expected, actual)
 
 [<Fact>]
+let ``Parser<'T> * int 4`` () =
+    let expected = Ok([], State("123", 0))
+    let actual = exec (char' 'x' * 0) (State("123", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``Parser<'T> * int 5`` () =
+    let expected = Error("Argument was invalid.", State("123", 0))
+    let actual = exec (char' '1' * -1) (State("123", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
 let ``int * Parser<'T> 1`` () =
     let expected = Ok([ 'w'; 'w'; 'w' ], State("www.~.com", 3))
     let actual = exec (3 * (char' 'w')) (State("www.~.com", 0))
@@ -179,6 +191,18 @@ let ``int * Parser<'T> 3`` () =
     let hex = [ '0' .. '9' ] @ [ 'a' .. 'f' ] |> List.map char' |> List.reduce (+)
     let expected = Error("Parsing failed.", State("#65a2ac", 0))
     let actual = exec (6 * hex) (State("#65a2ac", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``int * Parser<'T> 4`` () =
+    let expected = Ok([], State("123", 0))
+    let actual = exec (0 * char' 'x') (State("123", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``int * Parser<'T> 5`` () =
+    let expected = Error("Argument was invalid.", State("123", 0))
+    let actual = exec (-1 * char' '1') (State("123", 0))
     Assert.Equal(expected, actual)
 
 [<Fact>]

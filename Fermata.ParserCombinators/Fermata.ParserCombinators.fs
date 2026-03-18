@@ -7,6 +7,11 @@
 namespace Fermata.ParserCombinators
 
 module Parsers =
+    let errorsEmpty = "Input was empty."
+    let errorsExceeded = "Position exceeded input length."
+    let errorsFailed = "Parsing failed."
+    let errorsInvalid = "Argument was invalid."
+
     type State = State of string * int
 
     type Parser<'T> =
@@ -76,31 +81,17 @@ module Parsers =
                     | Ok(v, x') -> foldWhileOk x' (v :: acc) t
 
             fun (state: State) ->
-                List.replicate count parser
-                |> foldWhileOk state []
-                |> function
-                    | Ok v -> Ok v
-                    | Error(e, _) -> Error(e, state)
+                if count < 0 then
+                    Error(errorsInvalid, state)
+                else
+                    List.replicate count parser
+                    |> foldWhileOk state []
+                    |> function
+                        | Ok v -> Ok v
+                        | Error(e, _) -> Error(e, state)
             |> Parser
 
-        static member (*)(count: int, parser: Parser<'T>) : Parser<'T list> =
-            let rec foldWhileOk x acc (list: Parser<'T> list) =
-                match list with
-                | [] -> Ok(List.rev acc, x)
-                | h :: t ->
-                    let (Parser h') = h
-
-                    match h' x with
-                    | Error e -> Error e
-                    | Ok(v, x') -> foldWhileOk x' (v :: acc) t
-
-            fun (state: State) ->
-                List.replicate count parser
-                |> foldWhileOk state []
-                |> function
-                    | Ok v -> Ok v
-                    | Error(e, _) -> Error(e, state)
-            |> Parser
+        static member (*)(count: int, parser: Parser<'T>) : Parser<'T list> = parser * count
 
         member x.Many() : Parser<'T list> =
             fun (state: State) ->
@@ -117,11 +108,6 @@ module Parsers =
     let exec (p: Parser<'T>) (s: State) : Result<'T * State, string * State> =
         let (Parser p') = p
         p' s
-
-    let errorsEmpty = "Input was empty."
-    let errorsExceeded = "Position exceeded input length."
-    let errorsFailed = "Parsing failed."
-    let errorsInvalid = "Argument was invalid."
 
     let char' (c: char) : Parser<char> =
         fun (State(x, p)) ->
