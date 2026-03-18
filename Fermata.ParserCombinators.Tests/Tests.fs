@@ -213,6 +213,20 @@ let ``Parser<'T>.Many() 3`` () =
     Assert.Equal(expected, actual)
 
 [<Fact>]
+let ``exec 1`` () =
+    let p = char' 'f'
+    let expected = Ok('f', State("fsharp", 1))
+    let actual = exec p (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
+let ``exec 2`` () =
+    let p = char' 'c'
+    let expected = Error("Parsing failed.", State("fsharp", 0))
+    let actual = exec p (State("fsharp", 0))
+    Assert.Equal(expected, actual)
+
+[<Fact>]
 let ``char' 1`` () =
     let expected = Ok('f', State("fsharp", 1))
     let actual = exec (char' 'f') (State("fsharp", 0))

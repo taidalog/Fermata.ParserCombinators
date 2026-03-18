@@ -259,10 +259,25 @@ module Parsers =
         /// </example>
         member Many: unit -> Parser<'T list>
 
-    /// <summary></summary>
-    /// <param name="p"></param>
-    /// <param name="s"></param>
-    /// <returns></returns>
+    /// <summary>Executes a parser on a given state.</summary>
+    /// <param name="p">The parser to execute.</param>
+    /// <param name="s">The state to parse.</param>
+    /// <returns>The result of the parsing operation.</returns>
+    ///
+    /// <example id="exec-1">
+    /// <code lang="fsharp">
+    /// exec (char' 'f') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Ok('f', State("fsharp", 1))</c>
+    /// </example>
+    ///
+    /// <example id="exec-2">
+    /// <code lang="fsharp">
+    /// exec (char' 'c') (State("fsharp", 0))
+    /// </code>
+    /// Evaluates to <c>Error("Parsing failed.", State("fsharp", 0))</c>
+    /// </example>
+    ///
     val exec: p: Parser<'T> -> s: State -> Result<'T * State, string * State>
 
     /// <summary>Returns a new parser that takes a <c>State</c> and returns <c>Ok(v, State)</c> if the charactor at the specified position in the string in <c>State</c> matches <c>c</c>, otherwise <c>Error</c>.</summary>
